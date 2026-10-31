@@ -7,19 +7,17 @@ def env(name, default=""):
     return (os.environ.get(name) or default).strip()
 
 def connect():
-    host = env("FTP_HOST") or env("FTP_SERVER")
-    user = env("FTP_USER") or env("FTP_USERNAME")
+    # Používáme přesně vaše názvy z GitHub Secrets
+    host = env("FTP_SERVER")
+    user = env("FTP_USERNAME")
     pw = env("FTP_PASSWORD")
     
     if not (host and user and pw):
-        sys.exit("Chybí FTP přihlašovací údaje v proměnných prostředí (Secrets).")
+        sys.exit("Chybí FTP_SERVER, FTP_USERNAME nebo FTP_PASSWORD v GitHub Secrets.")
         
-    tls = env("FTP_TLS") == "1"
-    ftp = ftplib.FTP_TLS(timeout=60) if tls else ftplib.FTP(timeout=60)
-    ftp.connect(host, int(env("FTP_PORT", "21")))
+    ftp = ftplib.FTP(timeout=60)
+    ftp.connect(host, 21)
     ftp.login(user, pw)
-    if tls:
-        ftp.prot_p()
     ftp.set_pasv(True)
     ftp.voidcmd("TYPE I")
     return ftp
@@ -35,8 +33,8 @@ def goto_dir(ftp, path):
             ftp.cwd(part)
 
 def upload_file():
-    target = env("FTP_DIR", "/pipeline/")
-    print(f"🔌 Připojuji se k FTP serveru...")
+    target = "pipeline"  # Cílová složka na Webzdarma
+    print(f"🔌 Připojuji se k FTP serveru ({env('FTP_SERVER')})...")
     ftp = connect()
     
     goto_dir(ftp, target)
@@ -52,16 +50,14 @@ def upload_file():
     print(f"📤 Nahrávám {filename} přes .part...")
     ftp.storbinary(f"STOR {tmp}", io.BytesIO(data_bytes))
     
-    # Přejmenování na finální název
     try:
         ftp.delete(filename)
     except Exception:
         pass
     ftp.rename(tmp, filename)
     
-    print(f"✅ Soubor {filename} úspěšně nahrán do {target}!")
+    print(f"✅ Soubor {filename} úspěšně nahrán do složky {target}!")
     ftp.quit()
 
 if __name__ == "__main__":
     upload_file()
-  
