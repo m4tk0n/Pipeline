@@ -8,6 +8,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    
+    # KLÍČOVÉ: Povolení pro zápis zpět do repozitáře (git push)
+    permissions:
+      contents: write
 
     steps:
       - name: 1. Klonování repozitáře
@@ -20,15 +24,15 @@ jobs:
 
       - name: 3. Instalace závislostí
         run: |
-          pip install google-generativeai
+          pip install google-generativeai requests beautifulsoup4
 
-      - name: 4. Spuštění Python skriptu (Generování data.json)
+      - name: 4. Spuštění Python skriptu (Autonomní agent & sebestředná smyčka)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python agent_runner.py
 
-      - name: 5. Nahrání přes vlastní upload skript
+      - name: 5. Nahrání přes vlastní upload skript (na Webzdarma FTP)
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
