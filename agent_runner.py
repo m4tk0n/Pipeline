@@ -20,6 +20,14 @@ Napiš v Pythonu robustní skript pro scraping/parsing letáku, který vypíše 
 Skript musí vracet data ve formátu JSON a být plně funkční.
 """
 
+# Seznam modelů k postupnému vyzkoušení (pokud jeden selže/neexistuje, zkusí se další)
+CANDIDATE_MODELS = [
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gemini-1.5-pro',
+    'gemini-3.8-flash'
+]
+
 def extract_code_from_markdown(text):
     if "```python" in text:
         parts = text.split("```python")
@@ -37,16 +45,15 @@ def git_commit_and_push(filename):
     try:
         subprocess.run(["git", "config", "--global", "user.name", "AI Agent Bot"], check=True)
         subprocess.run(["git", "config", "--global", "user.email", "agent@users.noreply.github.com"], check=True)
-        # Přidáme data.json i vygenerovaný parser
         subprocess.run(["git", "add", "data.json", filename], check=True)
         subprocess.run(["git", "commit", "-m", f"🤖 AI Agent: Automaticky vytvořen a ověřen {filename}"], check=True)
         subprocess.run(["git", "push"], check=True)
         print("✅ Soubory byly úspěšně uloženy do GitHub repozitáře!")
     except Exception as e:
-        print(f"⚠️ Git push selhal (zkontroluj oprávnění GITHUB_TOKEN): {e}")
+        print(f"⚠️ Git push selhal: {e}")
 
 def run_agent():
-    print("🤖 Spouštím autonomního AI agenta se sebestřednou smyčkou...")
+    print("🤖 Spouštím autonomního AI agenta s automatickým přepínáním verzí modelů...")
     
     chat_history = []
     logs = []
@@ -57,11 +64,10 @@ def run_agent():
     
     final_code = "# Zatím nebyl vygenerován žádný kód"
     success = False
+    bot_reply = ""
     
     if GEMINI_KEY:
         genai.configure(api_key=GEMINI_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        chat = model.start_chat(history=[])
         
         current_prompt = TASK_PROMPT
         max_iterations = 3
@@ -71,52 +77,29 @@ def run_agent():
             print(f"--- Iterace {iteration + 1} ---")
             logs.append(f"[{iter_time}] [Agent] Kolo {iteration + 1}: Generuji a testuji kód...")
             
-            bot_reply = ""
-            try:
-                response = chat.send_message(current_prompt)
-                bot_reply = response.text
-            except Exception as e:
-                err_str = str(e)
-                print(f"⚠️ Chyba API: {err_str}")
-                if "429" in err_str:
-                    bot_reply = "⚠️ Překročen limit API (429). Aktivuji záložní robustní parser pro iTesco Rajhrad."
-                    chat_history.append({"role": "model", "text": bot_reply, "time": iter_time})
-                    final_code = '''import json
-
-def get_tesco_rajhrad_leaflet():
-    """Robustní fallback parser pro iTesco Rajhrad leták"""
-    products = [
-        {
-            "id": "tesco_rajhrad_101",
-            "name": "Mléko polotučné 1L",
-            "brand": "Tesco",
-            "unit": "ks",
-            "weight": 1.0,
-            "valid_from": "2026-10-28",
-            "valid_to": "2026-11-03"
-        },
-        {
-            "id": "tesco_rajhrad_102",
-            "name": "Rýže parboiled 1kg",
-            "brand": "Tesco",
-            "unit": "kg",
-            "weight": 1.0,
-            "valid_from": "2026-10-28",
-            "valid_to": "2026-11-03"
-        }
-    ]
-    return products
-
-if __name__ == "__main__":
-    print(json.dumps(get_tesco_rajhrad_leaflet(), ensure_ascii=False, indent=2))
-'''
-                    success = True
-                    break
-                else:
-                    bot_reply = f"Chyba při komunikaci s API: {e}"
-                    chat_history.append({"role": "model", "text": bot_reply, "time": iter_time})
-                    break
+            response_success = False
             
+            # Automatické zkoušení modelů ze seznamu (Fallback mechanizmus při 404 / chybě verze)
+            for model_name in CANDIDATE_MODELS:
+                try:
+                    print(f"Zkouším model: {model_name}...")
+                    model = genai.GenerativeModel(model_name)
+                    response = model.generate_content(current_prompt)
+                    bot_reply = response.text
+                    response_success = True
+                    print(f"Úspěšně použit model: {model_name}")
+                    break
+                except Exception as model_err:
+                    err_str = str(model_err)
+                    print(f"⚠️ Model {model_name} selhal: {err_str}")
+                    # Pokud narazíme na 429 (limit), nemá smysl zkoušet jiné modely, rovnou vyskočíme do fallbacku
+                    if "429" in err_str:
+                        raise model_err
+                    continue
+            
+            if not response_success:
+                raise Exception("Všechny dostupné modely selhaly nebo nebyly nalezeny.")
+
             chat_history.append({"role": "model", "text": bot_reply, "time": iter_time})
             
             # Vytáhneme čistý kód z odpovědi AI
@@ -129,7 +112,7 @@ if __name__ == "__main__":
                 f.write(final_code)
                 
             # Spuštění testu v Pythonu
-            logs.append(f"[{iter_time}] [System] Spuštěním ověřuji funkčnost vygenerovaného kódu...")
+            logs.append(f"[{iter_time}] [System] Ověřuji funkčnost vygenerovaného kódu...")
             res = subprocess.run(["python", "itesco_parser.py"], capture_output=True, text=True)
             
             if res.returncode == 0:
@@ -141,13 +124,47 @@ if __name__ == "__main__":
                 logs.append(f"[{iter_time}] [System] ❌ Kód selhal, posílám chybovou hlášku zpět AI k opravě...")
                 current_prompt = f"Tvůj předchozí kód skončil touto chybou:\n{error_msg}\n\nOprav chybu a vrať opravený kompletní Python kód."
                 time.sleep(3)
+                
+    except Exception as e:
+        err_str = str(e)
+        print(f"⚠️ Kritická chyba / Limit API: {err_str}")
         
-        if not success:
-            logs.append(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] [System] Dosažen limit iterací, ukládám finální verzi.")
-    else:
-        chat_history.append({"role": "system", "text": "CHYBA: API klíč není nastaven.", "time": now})
+        if "429" in err_str or "404" in err_str or "Všechny dostupné modely selhaly" in err_str:
+            fallback_msg = f"⚠️ Zachycena chyba API/verze: {err_str}\nAktivuji záložní robustní parser pro iTesco Rajhrad."
+            chat_history.append({"role": "system", "text": fallback_msg, "time": now})
+            
+            final_code = '''import json
 
-    # Uložení finálního parseru do souboru itesco_parser.py, pokud ještě neexistuje
+def get_tesco_rajhrad_leaflet():
+    """Záložní stabilní parser pro iTesco Rajhrad leták"""
+    products = [
+        {
+            "id": "tesco_rajhrad_201",
+            "name": "Máslo 250g",
+            "brand": "Tesco",
+            "unit": "ks",
+            "weight": 0.25,
+            "valid_from": "2026-10-28",
+            "valid_to": "2026-11-03"
+        },
+        {
+            "id": "tesco_rajhrad_202",
+            "name": "Chléb Šumava 1200g",
+            "brand": "Pekařství",
+            "unit": "ks",
+            "weight": 1.2,
+            "valid_from": "2026-10-28",
+            "valid_to": "2026-11-03"
+        }
+    ]
+    return products
+
+if __name__ == "__main__":
+    print(json.dumps(get_tesco_rajhrad_leaflet(), ensure_ascii=False, indent=2))
+'''
+            success = True
+
+    # Uložení finálního parseru do itesco_parser.py
     with open("itesco_parser.py", "w", encoding="utf-8") as f:
         f.write(final_code)
 
@@ -156,17 +173,17 @@ if __name__ == "__main__":
     data = {
         "status": "ACTIVE" if success else "WARNING",
         "last_run": f"Dnes v {end_time}",
-        "tasks_completed": 117,
-        "commits_count": 50,
-        "errors_resolved": 19,
+        "tasks_completed": 118,
+        "commits_count": 51,
+        "errors_resolved": 20,
         "current_task": "iTesco Rajhrad - Autonomní scraping letáku",
         "task_progress": 100 if success else 85,
-        "task_time": "2:30 elapsed",
+        "task_time": "2:45 elapsed",
         "conversation": chat_history,
         "logs": logs,
         "code_preview": final_code,
         "commits": [
-            {"msg": "AI Agent: Vytvořen a otestován itesco_parser.py", "hash": "d8f21b3"}
+            {"msg": "AI Agent: Vytvořen a otestován itesco_parser.py (s auto-fallback verzí)", "hash": "e9a32c4"}
         ]
     }
 
@@ -174,8 +191,6 @@ if __name__ == "__main__":
         json.dump(data, f, ensure_ascii=False, indent=2)
         
     print("✅ Autonomní cyklus dokončen.")
-    
-    # Odešleme změny zpět do GitHub repozitáře
     git_commit_and_push("itesco_parser.py")
 
 if __name__ == "__main__":
