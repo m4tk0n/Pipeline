@@ -1,9 +1,17 @@
-﻿name: Run AI Agent & Deploy Data
+name: Run AI Agent & Deploy Data
 
 on:
   schedule:
     - cron: '0 */6 * * *' # Běží každých 6 hodin zdarma
   workflow_dispatch: # Spuštění tlačítkem ručně
+
+env:
+  FTP_HOST: ${{ secrets.FTP_HOST }}
+  FTP_USER: ${{ secrets.FTP_USER }}
+  FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+  FTP_DIR: ${{ vars.FTP_DIR || '/pipeline/' }}
+  FTP_TLS: ${{ vars.FTP_TLS || '0' }}
+  FTP_PORT: ${{ vars.FTP_PORT || '21' }}
 
 jobs:
   build-and-deploy:
@@ -28,8 +36,6 @@ jobs:
         run: |
           python agent_runner.py
 
-      - name: 5. Nahrání data.json přes cURL na Webzdarma
+      - name: 5. Nahrání přes ověřený upload skript
         run: |
-          curl -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-               -T data.json \
-               ftp://${{ secrets.FTP_SERVER }}/pipeline/data.json
+          python upload_data_json.py
