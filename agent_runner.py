@@ -1,4 +1,4 @@
-﻿import os
+import os
 import json
 import datetime
 import google.generativeai as genai
@@ -9,10 +9,10 @@ GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 def run_agent():
     print("🤖 Spouštím AI Agenta...")
     
-    # 1. Volání AI (používáme aktuální model gemini-2.5-flash)
+    # 1. Volání AI (aktualizováno na gemini-3.8-flash)
     if GEMINI_KEY:
         genai.configure(api_key=GEMINI_KEY)
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('gemini-3.8-flash')
         prompt = "Napiš jednoduchou Python funkci pro výpočet DPH v CZ. Vrať pouze kód bez pouček."
         try:
             response = model.generate_content(prompt)
