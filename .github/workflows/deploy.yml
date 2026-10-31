@@ -28,11 +28,8 @@ jobs:
         run: |
           python agent_runner.py
 
-      - name: 5. Odeslání POUZE data.json na Webzdarma přes FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /pipeline/ # Cílová složka na Webzdarma
-          state-name: .ftp-deploy-sync-state.json
+      - name: 5. Nahrání data.json přes cURL na Webzdarma
+        run: |
+          curl -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+               -T data.json \
+               ftp://${{ secrets.FTP_SERVER }}/pipeline/data.json
