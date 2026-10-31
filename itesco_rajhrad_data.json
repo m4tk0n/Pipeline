@@ -1,0 +1,81 @@
+{
+    "meta": {
+        "generated_at": "2026-10-31T13:42:36+00:00",
+        "store": "itesco_rajhrad",
+        "store_url": "https://www.itesco.cz",
+        "country": "CZ",
+        "currency": "CZK",
+        "source": "itesco_rajhrad_letak",
+        "type": "offer",
+        "source_url": "https://www.itesco.cz/akcni-letaky/supermarket-rajhrad",
+        "product_count": 2,
+        "content_hash": "sha256:b9108a3c736ae2896c11311c9884e518bb31a4fc08869585748c58224e9e78a2",
+        "file_id": "386ec76c-b447-4eb3-b8b9-9cf2fd72944a",
+        "run_id": "20261031_134236-11d9ee9c"
+    },
+    "products": [
+        {
+            "store_product_id": "tesco_rajhrad_001",
+            "brand": "Tesco",
+            "name": "Čerstvé mléko polotučné 1,5% 1L",
+            "amount": "1",
+            "unit": "l",
+            "product_url": "https://www.itesco.cz/potraviny/mleko-mlecne-vyrobky/cerstve-mleko/p/000000",
+            "image_url": "https://img.itesco.cz/images/placeholder.jpg",
+            "category": "potraviny",
+            "price": "19.90",
+            "original_price": "24.90",
+            "comparison_price": "19.90",
+            "comparison_per": "1l",
+            "valid_from": "2026-10-31",
+            "valid_to": "2026-11-03",
+            "source_date": "2026-10-31",
+            "theme": "Akční leták Rajhrad",
+            "tags": [
+                "akce",
+                "tesco_clubcard"
+            ],
+            "deposit": "",
+            "deposit_type": "",
+            "approx_amount": false,
+            "drained_weight": false,
+            "variants": false,
+            "source": "itesco_rajhrad_letak",
+            "type": "offer",
+            "validity_source": "leaflet",
+            "validity_confidence": "high",
+            "validity_type": "promo"
+        },
+        {
+            "store_product_id": "tesco_rajhrad_002",
+            "brand": "Madeta",
+            "name": "Jihočeské máslo 250g",
+            "amount": "250",
+            "unit": "g",
+            "product_url": "https://www.itesco.cz/potraviny/mleko-mlecne-vyrobky/maslo/p/000001",
+            "image_url": "https://img.itesco.cz/images/placeholder.jpg",
+            "category": "potraviny",
+            "price": "49.90",
+            "original_price": "59.90",
+            "comparison_price": "199.60",
+            "comparison_per": "1kg",
+            "valid_from": "2026-10-31",
+            "valid_to": "2026-11-03",
+            "source_date": "2026-10-31",
+            "theme": "Akční leták Rajhrad",
+            "tags": [
+                "akce"
+            ],
+            "deposit": "",
+            "deposit_type": "",
+            "approx_amount": false,
+            "drained_weight": false,
+            "variants": false,
+            "source": "itesco_rajhrad_letak",
+            "type": "offer",
+            "validity_source": "leaflet",
+            "validity_confidence": "high",
+            "validity_type": "promo"
+        }
+    ]
+}
