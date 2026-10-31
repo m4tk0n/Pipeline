@@ -1,6 +1,7 @@
 import os
 import json
 import datetime
+import time
 import google.generativeai as genai
 
 # Konfigurace Gemini API (přes GitHub Secrets)
@@ -9,16 +10,23 @@ GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 def run_agent():
     print("🤖 Spouštím AI Agenta...")
     
-    # 1. Volání AI (aktualizováno na gemini-3.8-flash)
+    generated_code = ""
     if GEMINI_KEY:
         genai.configure(api_key=GEMINI_KEY)
         model = genai.GenerativeModel('gemini-3.8-flash')
         prompt = "Napiš jednoduchou Python funkci pro výpočet DPH v CZ. Vrať pouze kód bez pouček."
-        try:
-            response = model.generate_content(prompt)
-            generated_code = response.text
-        except Exception as e:
-            generated_code = f"# Chyba při volání API: {e}"
+        
+        for attempt in range(3):
+            try:
+                response = model.generate_content(prompt)
+                generated_code = response.text
+                break
+            except Exception as e:
+                if "429" in str(e) and attempt < 2:
+                    print(f"⚠️ Překročen limit (429), čekám 5 sekund... (Pokus {attempt+1}/3)")
+                    time.sleep(5)
+                else:
+                    generated_code = f"# Chyba při volání API: {e}"
     else:
         generated_code = "# GEMINI_API_KEY není nastaven v GitHub Secrets"
 
