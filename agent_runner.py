@@ -3,16 +3,16 @@ import json
 import datetime
 import google.generativeai as genai
 
-# Configuration Gemini API (přes GitHub Secrets)
+# Konfigurace Gemini API (přes GitHub Secrets)
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 
 def run_agent():
     print("🤖 Spouštím AI Agenta...")
     
-    # 1. Volání AI (Gemini Free Tier)
+    # 1. Volání AI (používáme aktuální model gemini-2.5-flash)
     if GEMINI_KEY:
         genai.configure(api_key=GEMINI_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         prompt = "Napiš jednoduchou Python funkci pro výpočet DPH v CZ. Vrať pouze kód bez pouček."
         try:
             response = model.generate_content(prompt)
@@ -37,7 +37,7 @@ def run_agent():
         "logs": [
             f"[{now}] [System] GitHub Actions workflow triggered.",
             f"[{now}] [Agent] Fetched task from GitHub Issue.",
-            f"[{now}] [API] Sent prompt to Gemini 1.5 Flash API.",
+            f"[{now}] [API] Sent prompt to Gemini API.",
             f"[{now}] [Agent] Received response, generating Python code...",
             f"[{now}] [System] Updating data.json on Webzdarma FTP..."
         ],
