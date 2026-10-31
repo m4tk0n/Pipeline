@@ -38,7 +38,6 @@ def run_agent():
     genai.configure(api_key=GEMINI_KEY)
     model = genai.GenerativeModel('gemini-2.0-flash')
     
-    # Zahájení reálné konverzace s pamětí chatu
     chat = model.start_chat(history=[])
     
     chat_history = []
@@ -59,17 +58,14 @@ def run_agent():
         chat_history.append({"role": "user", "text": current_prompt, "time": turn_time})
         
         try:
-            # Reálná komunikace v chatovací smyčce
             response = chat.send_message(current_prompt)
             bot_reply = response.text
             chat_history.append({"role": "model", "text": bot_reply, "time": turn_time})
             
-            # Extrakce kódu
             code = extract_code_from_markdown(bot_reply)
             if "import " in code:
                 final_code = code
             
-            # Zápis do souboru
             with open("itesco_parser.py", "w", encoding="utf-8") as f:
                 f.write(final_code)
                 
@@ -77,13 +73,11 @@ def run_agent():
             res = subprocess.run(["python", "itesco_parser.py"], capture_output=True, text=True)
             
             if res.returncode == 0:
-                # Kontrola, zda výstup je validní JSON
                 try:
                     output_data = json.loads(res.stdout)
                     prod_count = len(output_data.get("products", []))
                     logs.append(f"[{turn_time}] [System] ✅ Kód proběhl úspěšně. Nalezeno produktů: {prod_count}")
                     
-                    # Uložení reálných dat
                     with open("itesco_rajhrad_data.json", "w", encoding="utf-8") as jf:
                         jf.write(res.stdout)
                     
@@ -96,16 +90,14 @@ def run_agent():
             else:
                 error_msg = res.stderr.strip()
                 logs.append(f"[{turn_time}] [System] ❌ Sandbox zachytil chybu:\n{error_msg}")
-                # ZDE PROBÍHÁ SKUTEČNÁ KOMUNIKACE: Pošleme chybu zpět do chatu pro další kolo!
                 current_prompt = f"Tvůj kód vyvolal při spuštění následující chybu:\n{error_msg}\n\nAnalyzuj chybu, oprav kód a vrať kompletní opravený Python kód."
                 
         except Exception as e:
             err_str = str(e)
             print(f"⚠️ Chyba v komunikační smyčce: {err_str}")
             logs.append(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] [System] Chyba: {err_str}")
-            current_prompt = fNastala tato systémová chyba: {err_str}. Zkus navrhnout robustnější řešení."
+            current_prompt = f"Nastala tato systémová chyba: {err_str}. Zkus navrhnout robustnější řešení."
 
-    # Uložení stavu pro dashboard
     end_time = datetime.datetime.now().strftime("%H:%M:%S")
     dashboard_data = {
         "status": "ACTIVE" if success else "WARNING",
@@ -119,19 +111,18 @@ def run_agent():
         "conversation": chat_history,
         "logs": logs,
         "code_preview": final_code,
-        "commits": [{"msg": "AI Agent: Multi-turn cyklus s předáváním chybových hlášek", "hash": "f6a7b8c"}]
+        "commits": [{"msg": "AI Agent: Multi-turn cyklus opraven", "hash": "f6a7b8c"}]
     }
 
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(dashboard_data, f, ensure_ascii=False, indent=2)
 
-    # Git push
     print("🚀 Provádím Git commit a push...")
     try:
         subprocess.run(["git", "config", "--global", "user.name", "AI Agent Bot"], check=True)
         subprocess.run(["git", "config", "--global", "user.email", "agent@users.noreply.github.com"], check=True)
         subprocess.run(["git", "add", "itesco_parser.py", "itesco_rajhrad_data.json", "data.json"], check=True)
-        subprocess.run(["git", "commit", "-m", "🤖 AI Agent: Dokončen reálný multi-turn cyklus"], check=True)
+        subprocess.run(["git", "commit", "-m", "🤖 AI Agent: Oprava syntaxe v agent_runner.py"], check=True)
         subprocess.run(["git", "push"], check=True)
         print("✅ Hotovo!")
     except Exception as e:
