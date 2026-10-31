@@ -1,9 +1,9 @@
-name: Run AI Agent & Deploy Data
+﻿name: Run AI Agent & Deploy Data
 
 on:
   schedule:
     - cron: '0 */6 * * *' # Běží každých 6 hodin zdarma
-  workflow_dispatch: # Nebo tlačítkem ručně z mobilu/PC
+  workflow_dispatch: # Spuštění tlačítkem ručně
 
 jobs:
   build-and-deploy:
@@ -29,7 +29,7 @@ jobs:
           python agent_runner.py
 
       - name: 5. Odeslání POUZE data.json na Webzdarma přes FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
