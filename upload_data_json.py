@@ -1,63 +1,46 @@
 #!/usr/bin/env python3
-"""Upload dashboard JSON files to Webzdarma using FTP temporary-file replacement."""
-import ftplib
-import io
+# Cesta: Pipeline/upload_data_json.py
+"""Nahraje data.json a live_status.json na Webzdarma přes FTP(S)."""
 import os
 import sys
 from pathlib import Path
 
 from config import load_dotenv
+import ftp_util
 
 ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / ".env")
 
-
-def env(name: str, default: str = "") -> str:
-    return (os.environ.get(name) or default).strip()
-
-
-def upload_one(ftp: ftplib.FTP, local_name: str, remote_name: str, remote_dir: str) -> None:
-    path = Path(local_name)
-    if not path.is_file():
-        print(f"Přeskakuji {local_name}: soubor neexistuje.")
-        return
-    ftp.cwd("/")
-    for part in [part for part in remote_dir.split("/") if part]:
-        try:
-            ftp.cwd(part)
-        except ftplib.error_perm:
-            ftp.mkd(part)
-            ftp.cwd(part)
-    temp_name = remote_name + ".part"
-    payload = path.read_bytes()
-    ftp.storbinary(f"STOR {temp_name}", io.BytesIO(payload))
-    try:
-        ftp.delete(remote_name)
-    except ftplib.error_perm:
-        pass
-    ftp.rename(temp_name, remote_name)
-    print(f"Nahráno {local_name} -> {remote_dir}/{remote_name} ({len(payload)} B)")
+FILES = ("data.json", "live_status.json", "itesco_rajhrad_data.json")
 
 
 def main() -> int:
-    host, user, password = env("FTP_SERVER"), env("FTP_USERNAME"), os.environ.get("FTP_PASSWORD", "")
-    if not (host and user and password):
-        print("Chybí FTP_SERVER, FTP_USERNAME nebo FTP_PASSWORD.", file=sys.stderr)
+    present = [name for name in FILES if (ROOT / name).is_file()]
+    for name in FILES:
+        if name not in present:
+            print(f"Přeskakuji {name}: soubor neexistuje.")
+    if not present:
+        print("Není co nahrát: žádný z očekávaných souborů neexistuje.", file=sys.stderr)
         return 1
-    ftp = ftplib.FTP(timeout=30)
+
+    remote_dir = (os.environ.get("FTP_REMOTE_DIR") or "pipeline").strip()
     try:
-        ftp.connect(host, 21)
-        ftp.login(user, password)
-        ftp.set_pasv(True)
-        remote_dir = env("FTP_REMOTE_DIR", "pipeline")
-        upload_one(ftp, "data.json", "data.json", remote_dir)
-        upload_one(ftp, "live_status.json", "live_status.json", remote_dir)
+        ftp = ftp_util.connect(timeout=30)
+    except Exception as exc:
+        print(f"FTP připojení selhalo: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return 1
+
+    try:
+        ftp_util.cd_remote_dir(ftp, remote_dir)
+        for name in present:
+            size = ftp_util.upload_file(ftp, ROOT / name, name)
+            print(f"Nahráno {name} -> {remote_dir}/{name} ({size} B)")
         return 0
+    except Exception as exc:
+        print(f"FTP upload selhal: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return 1
     finally:
-        try:
-            ftp.quit()
-        except Exception:
-            ftp.close()
+        ftp_util.close(ftp)
 
 
 if __name__ == "__main__":
