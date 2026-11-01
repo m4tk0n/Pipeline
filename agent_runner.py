@@ -678,6 +678,14 @@ def run_agent() -> int:
         last_test: dict[str, Any] | None = run_allowed_test(task["validation"])
         write_status("Výchozí test dokončen", json.dumps(last_test, ensure_ascii=False))
 
+        if last_test.get("success"):
+            # Parser už funguje: žádný dotaz na AI není potřeba (šetří kvótu).
+            STATUS["status"] = "SUCCESS"
+            STATUS["final_result"] = {"success": True, "message": "Výchozí test prošel, úprava není potřeba."}
+            write_status("Úkol splněn bez zásahu AI", "Parser vrací platná data.", force=True, status="SUCCESS")
+            make_dashboard_data("SUCCESS", task_label)
+            return commit_successful_parser(task["target_file"], task_label)
+
         initial_prompt = (
             "Jsi programovací agent. Řeš úkol iterativně a odpovídej pouze JSON podle "
             "vynuceného schématu. Nevypisuj interní skryté uvažování; pole explanation "
