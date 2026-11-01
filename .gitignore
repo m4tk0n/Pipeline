@@ -1,0 +1,12 @@
+# Tajne konfigurace a lokalni soubory – nikdy necommitovat
+github_config.php
+.env.local
+.env.*.local
+
+# Docasne soubory behu agenta
+*.bak
+*.tmp
+*.part
+live_status.json
+__pycache__/
+*.py[cod]

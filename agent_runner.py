@@ -16,14 +16,20 @@ from typing import Any
 import requests
 
 ROOT = Path(__file__).resolve().parent
+from config import load_dotenv
+
+load_dotenv(ROOT / ".env")
+
 STATUS_FILE = ROOT / "live_status.json"
 DATA_FILE = ROOT / "data.json"
 PARSER_FILE = ROOT / "itesco_parser.py"
 PARSER_OUTPUT = ROOT / "itesco_rajhrad_data.json"
 ALLOWED_FILES = {"itesco_parser.py": PARSER_FILE}
 MAX_TURNS = min(max(int(os.getenv("MAX_TURNS", "15")), 1), 15)
-TOTAL_TIMEOUT = int(os.getenv("AGENT_TIMEOUT_SECONDS", "600"))
-TEST_TIMEOUT = int(os.getenv("TEST_TIMEOUT_SECONDS", "30"))
+TOTAL_TIMEOUT = max(30, int(os.getenv("AGENT_TIMEOUT_SECONDS", "600")))
+TEST_TIMEOUT = max(5, int(os.getenv("TEST_TIMEOUT_SECONDS", "45")))
+MAX_LOG_ENTRIES = max(20, min(2000, int(os.getenv("MAX_LOG_ENTRIES", "250"))))
+MIN_TESCO_PRODUCTS = max(1, int(os.getenv("MIN_TESCO_PRODUCTS", "1")))
 GEMINI_MODEL = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 FTP_DIR = os.getenv("FTP_REMOTE_DIR", "pipeline").strip("/") or "pipeline"
@@ -89,7 +95,7 @@ def write_status(event: str, detail: str = "", **fields: Any) -> None:
         STATUS.setdefault("logs", []).append(
             {"time": now(), "event": safe_text(event, 300), "detail": safe_text(detail, 5000)}
         )
-        STATUS["logs"] = STATUS["logs"][-250:]
+        STATUS["logs"] = STATUS["logs"][-MAX_LOG_ENTRIES:]
     STATUS.update(fields)
     # Local atomic replacement prevents readers from seeing a partial JSON document.
     temp = STATUS_FILE.with_suffix(".json.tmp")
@@ -111,7 +117,7 @@ def load_task() -> dict[str, Any]:
         task = {
             "task": "Analyzuj a oprav parser aktuálního letáku Tesco Rajhrad tak, aby získával skutečné produkty. Zachovej existující výstupní JSON strukturu.",
             "target_file": "itesco_parser.py",
-            "validation": {"type": "tesco_products", "min_products": 1},
+            "validation": {"type": "tesco_products", "min_products": MIN_TESCO_PRODUCTS},
         }
     if isinstance(task, str):
         task = {"task": task}
@@ -121,7 +127,9 @@ def load_task() -> dict[str, Any]:
     if target not in ALLOWED_FILES:
         raise ValueError(f"Nepovolený cílový soubor: {target}")
     task["target_file"] = target
-    task.setdefault("validation", {"type": "tesco_products", "min_products": 1})
+    task.setdefault("validation", {"type": "tesco_products", "min_products": MIN_TESCO_PRODUCTS})
+    if isinstance(task["validation"], dict) and task["validation"].get("type") == "tesco_products":
+        task["validation"].setdefault("min_products", MIN_TESCO_PRODUCTS)
     return task
 
 
@@ -217,7 +225,7 @@ def run_allowed_test(validation: dict[str, Any]) -> dict[str, Any]:
     valid = isinstance(data, dict) and isinstance(data.get("meta"), dict) and isinstance(data.get("products"), list)
     validation_type = validation.get("type", "tesco_products")
     if validation_type == "tesco_products":
-        minimum = max(1, int(validation.get("min_products", 1)))
+        minimum = max(1, int(validation.get("min_products", MIN_TESCO_PRODUCTS)))
         valid = bool(valid and len(data["products"]) >= minimum and code == 0)
         reason = f"Požadováno alespoň {minimum} produktů; nalezeno {len(data['products']) if valid or isinstance(data, dict) and isinstance(data.get('products'), list) else 0}."
     else:
