@@ -25,13 +25,18 @@ DATA_FILE = ROOT / "data.json"
 PARSER_FILE = ROOT / "itesco_parser.py"
 PARSER_OUTPUT = ROOT / "itesco_rajhrad_data.json"
 ALLOWED_FILES = {"itesco_parser.py": PARSER_FILE}
+
 MAX_TURNS = min(max(int(os.getenv("MAX_TURNS", "15")), 1), 15)
 TOTAL_TIMEOUT = max(30, int(os.getenv("AGENT_TIMEOUT_SECONDS", "600")))
 TEST_TIMEOUT = max(5, int(os.getenv("TEST_TIMEOUT_SECONDS", "45")))
 MAX_LOG_ENTRIES = max(20, min(2000, int(os.getenv("MAX_LOG_ENTRIES", "250"))))
 MIN_TESCO_PRODUCTS = max(1, int(os.getenv("MIN_TESCO_PRODUCTS", "1")))
+
 GEMINI_MODEL = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
-GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+GEMINI_ENDPOINT = (
+    "https://generativelanguage.googleapis.com/v1beta/models/"
+    "{model}:generateContent"
+)
 FTP_DIR = os.getenv("FTP_REMOTE_DIR", "pipeline").strip("/") or "pipeline"
 
 STATUS: dict[str, Any] = {}
@@ -39,30 +44,17 @@ START_MONOTONIC = 0.0
 
 
 def configuration_report() -> str:
-    """
-    Vypíše skutečnou konfiguraci agenta.
-    Hodnoty tajných údajů nikdy nezobrazuje.
-    """
+    """Přehledný výpis skutečně načtené konfigurace agenta."""
 
     settings = [
-        ("GEMINI_MODEL", GEMINI_MODEL),
-        ("MAX_TURNS", MAX_TURNS),
-        ("AGENT_TIMEOUT_SECONDS", TOTAL_TIMEOUT),
-        ("TEST_TIMEOUT_SECONDS", TEST_TIMEOUT),
-        ("MAX_LOG_ENTRIES", MAX_LOG_ENTRIES),
-        ("MIN_TESCO_PRODUCTS", MIN_TESCO_PRODUCTS),
-        ("FTP_REMOTE_DIR", FTP_DIR),
+        ("Gemini model", GEMINI_MODEL),
+        ("Maximální počet kol", MAX_TURNS),
+        ("Časový limit agenta", f"{TOTAL_TIMEOUT} sekund"),
+        ("Časový limit testu", f"{TEST_TIMEOUT} sekund"),
+        ("Maximální počet logů", MAX_LOG_ENTRIES),
+        ("Minimum produktů", MIN_TESCO_PRODUCTS),
+        ("FTP složka", FTP_DIR),
     ]
-
-    lines = [
-        "=== KONFIGURACE AI AGENTA ===",
-    ]
-
-    for name, value in settings:
-        lines.append(f"{name}: {value}")
-
-    lines.append("")
-    lines.append("=== STAV TAJNÝCH PROMĚNNÝCH ===")
 
     secrets = [
         "GEMINI_API_KEY",
@@ -71,12 +63,36 @@ def configuration_report() -> str:
         "FTP_PASSWORD",
     ]
 
+    lines = [
+        "",
+        "╔══════════════════════════════════════════════════╗",
+        "║              AI AGENT – KONFIGURACE              ║",
+        "╠══════════════════════════════════════════════════╣",
+        "║                                                  ║",
+        "║  MODEL A VÝKON                                   ║",
+        "║  ──────────────────────────────────────────────  ║",
+    ]
+
+    for name, value in settings:
+        lines.append(f"║  {name:<25} {str(value):<22} ║")
+
+    lines.extend([
+        "║                                                  ║",
+        "║  PŘÍSTUPOVÉ ÚDAJE                                ║",
+        "║  ──────────────────────────────────────────────  ║",
+    ])
+
     for name in secrets:
         configured = bool(os.getenv(name, "").strip())
-        state = "NASTAVENO" if configured else "CHYBÍ"
-        lines.append(f"{name}: [{state}]")
+        state = "✓ NASTAVENO" if configured else "✗ CHYBÍ"
+        lines.append(f"║  {name:<25} {state:<22} ║")
 
-    lines.append("=============================")
+    lines.extend([
+        "║                                                  ║",
+        "║  STAV: KONFIGURACE NAČTENA                       ║",
+        "╚══════════════════════════════════════════════════╝",
+        "",
+    ])
 
     return "\n".join(lines)
 
@@ -87,10 +103,16 @@ def now() -> str:
 
 def safe_text(value: Any, limit: int = 12000) -> str:
     text = str(value or "")
-    for secret_name in ("GEMINI_API_KEY", "FTP_PASSWORD", "GITHUB_TOKEN"):
+
+    for secret_name in (
+        "GEMINI_API_KEY",
+        "FTP_PASSWORD",
+        "GITHUB_TOKEN",
+    ):
         secret = os.getenv(secret_name)
         if secret:
             text = text.replace(secret, "[REDACTED]")
+
     return text[:limit]
 
 
@@ -98,32 +120,41 @@ def ftp_upload_status() -> None:
     host = os.getenv("FTP_SERVER", "").strip()
     user = os.getenv("FTP_USERNAME", "").strip()
     password = os.getenv("FTP_PASSWORD", "")
+
     if not (host and user and password):
         return
 
     payload = STATUS_FILE.read_bytes()
     ftp = ftplib.FTP(timeout=20)
+
     try:
         ftp.connect(host, 21)
         ftp.login(user, password)
         ftp.set_pasv(True)
         ftp.cwd("/")
+
         for part in FTP_DIR.split("/"):
             if not part:
                 continue
+
             try:
                 ftp.cwd(part)
             except ftplib.error_perm:
                 ftp.mkd(part)
                 ftp.cwd(part)
+
         temp_name = "live_status.json.part"
+
         with __import__("io").BytesIO(payload) as stream:
             ftp.storbinary(f"STOR {temp_name}", stream)
+
         try:
             ftp.delete("live_status.json")
         except ftplib.error_perm:
             pass
+
         ftp.rename(temp_name, "live_status.json")
+
     finally:
         try:
             ftp.quit()
@@ -134,58 +165,96 @@ def ftp_upload_status() -> None:
 def write_status(event: str, detail: str = "", **fields: Any) -> None:
     STATUS["last_update"] = now()
     STATUS["current_activity"] = safe_text(event, 500)
+
     if detail:
-        STATUS.setdefault("logs", []).append(
-            {"time": now(), "event": safe_text(event, 300), "detail": safe_text(detail, 5000)}
-        )
+        STATUS.setdefault("logs", []).append({
+            "time": now(),
+            "event": safe_text(event, 300),
+            "detail": safe_text(detail, 5000),
+        })
+
         STATUS["logs"] = STATUS["logs"][-MAX_LOG_ENTRIES:]
+
     STATUS.update(fields)
 
-    # Local atomic replacement prevents readers from seeing a partial JSON document.
     temp = STATUS_FILE.with_suffix(".json.tmp")
-    temp.write_text(json.dumps(STATUS, ensure_ascii=False, indent=2), encoding="utf-8")
+    temp.write_text(
+        json.dumps(STATUS, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     temp.replace(STATUS_FILE)
 
     try:
         ftp_upload_status()
     except Exception as exc:
-        print(f"[LIVE FTP WARNING] {safe_text(exc, 1000)}", flush=True)
+        print(
+            f"[LIVE FTP WARNING] {safe_text(exc, 1000)}",
+            flush=True,
+        )
 
 
 def load_task() -> dict[str, Any]:
     raw = os.getenv("TASK_JSON", "").strip()
+
     if raw:
         task = json.loads(raw)
+
     elif (ROOT / "task.json").exists():
-        task = json.loads((ROOT / "task.json").read_text(encoding="utf-8"))
+        task = json.loads(
+            (ROOT / "task.json").read_text(encoding="utf-8")
+        )
+
     else:
         task = {
-            "task": "Analyzuj a oprav parser aktuálního letáku Tesco Rajhrad tak, aby získával skutečné produkty. Zachovej existující výstupní JSON strukturu.",
+            "task": (
+                "Analyzuj a oprav parser aktuálního letáku Tesco Rajhrad "
+                "tak, aby získával skutečné produkty. "
+                "Zachovej existující výstupní JSON strukturu."
+            ),
             "target_file": "itesco_parser.py",
-            "validation": {"type": "tesco_products", "min_products": MIN_TESCO_PRODUCTS},
+            "validation": {
+                "type": "tesco_products",
+                "min_products": MIN_TESCO_PRODUCTS,
+            },
         }
 
     if isinstance(task, str):
         task = {"task": task}
 
     if not isinstance(task, dict) or not str(task.get("task", "")).strip():
-        raise ValueError("Zadání musí být JSON objekt s neprázdným polem 'task'.")
+        raise ValueError(
+            "Zadání musí být JSON objekt s neprázdným polem 'task'."
+        )
 
     target = task.get("target_file", "itesco_parser.py")
+
     if target not in ALLOWED_FILES:
         raise ValueError(f"Nepovolený cílový soubor: {target}")
 
     task["target_file"] = target
-    task.setdefault("validation", {"type": "tesco_products", "min_products": MIN_TESCO_PRODUCTS})
+    task.setdefault(
+        "validation",
+        {
+            "type": "tesco_products",
+            "min_products": MIN_TESCO_PRODUCTS,
+        },
+    )
 
-    if isinstance(task["validation"], dict) and task["validation"].get("type") == "tesco_products":
-        task["validation"].setdefault("min_products", MIN_TESCO_PRODUCTS)
+    if (
+        isinstance(task["validation"], dict)
+        and task["validation"].get("type") == "tesco_products"
+    ):
+        task["validation"].setdefault(
+            "min_products",
+            MIN_TESCO_PRODUCTS,
+        )
 
     return task
 
 
 def gemini_request(contents: list[dict[str, Any]]) -> dict[str, Any]:
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
+
     if not api_key:
         raise RuntimeError("Chybí GitHub Secret GEMINI_API_KEY.")
 
@@ -204,7 +273,12 @@ def gemini_request(contents: list[dict[str, Any]]) -> dict[str, Any]:
                     "properties": {
                         "action": {
                             "type": "STRING",
-                            "enum": ["modify_code", "run_test", "analyze_only", "finish"],
+                            "enum": [
+                                "modify_code",
+                                "run_test",
+                                "analyze_only",
+                                "finish",
+                            ],
                         },
                         "target_file": {"type": "STRING"},
                         "explanation": {"type": "STRING"},
@@ -222,7 +296,11 @@ def gemini_request(contents: list[dict[str, Any]]) -> dict[str, Any]:
                         },
                         "task_completed": {"type": "BOOLEAN"},
                     },
-                    "required": ["action", "explanation", "task_completed"],
+                    "required": [
+                        "action",
+                        "explanation",
+                        "task_completed",
+                    ],
                 },
             },
         },
@@ -231,7 +309,8 @@ def gemini_request(contents: list[dict[str, Any]]) -> dict[str, Any]:
 
     if response.status_code >= 400:
         raise RuntimeError(
-            f"Gemini API HTTP {response.status_code}: {safe_text(response.text, 3000)}"
+            f"Gemini API HTTP {response.status_code}: "
+            f"{safe_text(response.text, 3000)}"
         )
 
     body = response.json()
@@ -240,7 +319,8 @@ def gemini_request(contents: list[dict[str, Any]]) -> dict[str, Any]:
         text = body["candidates"][0]["content"]["parts"][0]["text"]
     except (KeyError, IndexError, TypeError) as exc:
         raise RuntimeError(
-            f"Gemini vrátilo prázdnou/neplatnou odpověď: {safe_text(body, 2000)}"
+            "Gemini vrátilo prázdnou/neplatnou odpověď: "
+            f"{safe_text(body, 2000)}"
         ) from exc
 
     try:
@@ -251,16 +331,24 @@ def gemini_request(contents: list[dict[str, Any]]) -> dict[str, Any]:
         ) from exc
 
     if not isinstance(result, dict) or result.get("action") not in {
-        "modify_code", "run_test", "analyze_only", "finish"
+        "modify_code",
+        "run_test",
+        "analyze_only",
+        "finish",
     }:
         raise RuntimeError("Gemini vrátilo neplatnou akci.")
 
     return result
 
 
-def apply_model_changes(result: dict[str, Any], target_name: str) -> None:
+def apply_model_changes(
+    result: dict[str, Any],
+    target_name: str,
+) -> None:
     if result.get("target_file", target_name) != target_name:
-        raise ValueError("Gemini se pokusilo upravit jiný než povolený soubor.")
+        raise ValueError(
+            "Gemini se pokusilo upravit jiný než povolený soubor."
+        )
 
     target = ALLOWED_FILES[target_name]
     original = target.read_text(encoding="utf-8")
@@ -274,19 +362,27 @@ def apply_model_changes(result: dict[str, Any], target_name: str) -> None:
 
             if not old or updated.count(old) != 1:
                 raise ValueError(
-                    "Patch odmítnut: old_text musí odpovídat právě jednomu místu v souboru."
+                    "Patch odmítnut: old_text musí odpovídat "
+                    "právě jednomu místu v souboru."
                 )
 
             updated = updated.replace(old, new, 1)
 
-    elif isinstance(result.get("code_content"), str) and result["code_content"].strip():
+    elif (
+        isinstance(result.get("code_content"), str)
+        and result["code_content"].strip()
+    ):
         updated = result["code_content"]
 
     else:
-        raise ValueError("Akce modify_code neobsahuje edits ani code_content.")
+        raise ValueError(
+            "Akce modify_code neobsahuje edits ani code_content."
+        )
 
     if updated == original:
-        raise ValueError("Gemini navrhlo změnu, která nemění obsah souboru.")
+        raise ValueError(
+            "Gemini navrhlo změnu, která nemění obsah souboru."
+        )
 
     backup = target.with_suffix(target.suffix + ".bak")
     backup.write_text(original, encoding="utf-8")
@@ -295,9 +391,12 @@ def apply_model_changes(result: dict[str, Any], target_name: str) -> None:
     temp.write_text(updated, encoding="utf-8")
     temp.replace(target)
 
-    STATUS.setdefault("changes", []).append(
-        {"file": target_name, "change": "updated", "time": now()}
-    )
+    STATUS.setdefault("changes", []).append({
+        "file": target_name,
+        "change": "updated",
+        "time": now(),
+    })
+
     STATUS["changes"] = STATUS["changes"][-20:]
 
 
@@ -312,21 +411,24 @@ def run_allowed_test(validation: dict[str, Any]) -> dict[str, Any]:
             text=True,
             timeout=TEST_TIMEOUT,
         )
-        stdout, stderr, code = proc.stdout, proc.stderr, proc.returncode
+
+        stdout = proc.stdout
+        stderr = proc.stderr
+        code = proc.returncode
 
     except subprocess.TimeoutExpired as exc:
-        stdout, stderr, code = (
-            safe_text(exc.stdout),
-            "Test překročil časový limit.",
-            124,
-        )
+        stdout = safe_text(exc.stdout)
+        stderr = "Test překročil časový limit."
+        code = 124
 
     data = None
     json_error = None
 
     if PARSER_OUTPUT.exists():
         try:
-            data = json.loads(PARSER_OUTPUT.read_text(encoding="utf-8"))
+            data = json.loads(
+                PARSER_OUTPUT.read_text(encoding="utf-8")
+            )
         except (OSError, json.JSONDecodeError) as exc:
             json_error = str(exc)
     else:
@@ -341,13 +443,29 @@ def run_allowed_test(validation: dict[str, Any]) -> dict[str, Any]:
     validation_type = validation.get("type", "tesco_products")
 
     if validation_type == "tesco_products":
-        minimum = max(1, int(validation.get("min_products", MIN_TESCO_PRODUCTS)))
-        valid = bool(valid and len(data["products"]) >= minimum and code == 0)
+        minimum = max(
+            1,
+            int(validation.get("min_products", MIN_TESCO_PRODUCTS)),
+        )
+
+        valid = bool(
+            valid
+            and len(data["products"]) >= minimum
+            and code == 0
+        )
+
+        product_count = (
+            len(data["products"])
+            if isinstance(data, dict)
+            and isinstance(data.get("products"), list)
+            else 0
+        )
 
         reason = (
             f"Požadováno alespoň {minimum} produktů; "
-            f"nalezeno {len(data['products']) if valid or isinstance(data, dict) and isinstance(data.get('products'), list) else 0}."
+            f"nalezeno {product_count}."
         )
+
     else:
         valid = False
         reason = f"Neznámý validační profil: {validation_type}."
@@ -361,7 +479,8 @@ def run_allowed_test(validation: dict[str, Any]) -> dict[str, Any]:
         "json_error": safe_text(json_error, 1000),
         "products_count": (
             len(data.get("products", []))
-            if isinstance(data, dict) and isinstance(data.get("products"), list)
+            if isinstance(data, dict)
+            and isinstance(data.get("products"), list)
             else 0
         ),
         "reason": reason,
@@ -379,8 +498,11 @@ def make_dashboard_data(
     ]
 
     history = STATUS.get("turns_history", [])
+
     failed_attempts = sum(
-        1 for item in history if item.get("test") and not item["test"].get("success")
+        1
+        for item in history
+        if item.get("test") and not item["test"].get("success")
     )
 
     progress = (
@@ -416,6 +538,7 @@ def run_agent() -> int:
     global STATUS, START_MONOTONIC
 
     START_MONOTONIC = time.monotonic()
+
     session_id = (
         dt.datetime.now().strftime("%Y%m%d_%H%M%S")
         + "_"
@@ -448,7 +571,7 @@ def run_agent() -> int:
             status="RUNNING",
         )
 
-        # Výpis skutečné konfigurace do GitHub Actions i živého logu.
+        # Výpis konfigurace do GitHub Actions i živého logu.
         config_text = configuration_report()
 
         print(config_text, flush=True)
@@ -460,7 +583,9 @@ def run_agent() -> int:
 
         source_code = PARSER_FILE.read_text(encoding="utf-8")
 
-        last_test: dict[str, Any] | None = run_allowed_test(task["validation"])
+        last_test: dict[str, Any] | None = run_allowed_test(
+            task["validation"]
+        )
 
         write_status(
             "Výchozí test dokončen",
@@ -468,15 +593,22 @@ def run_agent() -> int:
         )
 
         initial_prompt = (
-            "Jsi programovací agent. Řeš úkol iterativně a odpovídej pouze JSON podle vynuceného schématu. "
-            "Nevypisuj interní skryté uvažování; pole explanation je stručné shrnutí rozhodnutí. "
-            "Povolený soubor je výhradně itesco_parser.py. Nikdy nežádej ani nevydávej libovolné shell příkazy. "
+            "Jsi programovací agent. Řeš úkol iterativně a odpovídej "
+            "pouze JSON podle vynuceného schématu. "
+            "Nevypisuj interní skryté uvažování; pole explanation "
+            "je stručné shrnutí rozhodnutí. "
+            "Povolený soubor je výhradně itesco_parser.py. "
+            "Nikdy nežádej ani nevydávej libovolné shell příkazy. "
             "Povolené akce: modify_code, run_test, analyze_only, finish. "
-            "Při modify_code použij přednostně edits [{old_text,new_text}], kde old_text přesně odpovídá právě jednomu místu; "
-            "code_content použij jen když je nutný úplný obsah souboru. Test spouští orchestrátor sám. "
-            "Dokončení smíš deklarovat pouze po úspěšném reálném testu.\n\nZADÁNÍ:\n"
+            "Při modify_code použij přednostně edits "
+            "[{old_text,new_text}], kde old_text přesně odpovídá "
+            "právě jednomu místu; code_content použij jen když je "
+            "nutný úplný obsah souboru. Test spouští orchestrátor sám. "
+            "Dokončení smíš deklarovat pouze po úspěšném reálném testu."
+            "\n\nZADÁNÍ:\n"
             + task_text
-            + "\n\nAKTUÁLNÍ OBSAH POVOLENÉHO SOUBORU itesco_parser.py:\n"
+            + "\n\nAKTUÁLNÍ OBSAH POVOLENÉHO SOUBORU "
+            "itesco_parser.py:\n"
             + source_code
         )
 
@@ -572,11 +704,15 @@ def run_agent() -> int:
 
             if action == "modify_code":
                 try:
-                    apply_model_changes(model_result, task["target_file"])
+                    apply_model_changes(
+                        model_result,
+                        task["target_file"],
+                    )
 
                     write_status(
                         "Kód upraven",
-                        f"Gemini změnilo {task['target_file']}. Spouštím povolený test.",
+                        f"Gemini změnilo {task['target_file']}. "
+                        "Spouštím povolený test.",
                     )
 
                     last_test = run_allowed_test(task["validation"])
@@ -591,7 +727,8 @@ def run_agent() -> int:
 
                             write_status(
                                 "Rollback",
-                                "Test neprošel; vracím poslední změnu a předávám výsledek Gemini.",
+                                "Test neprošel; vracím poslední změnu "
+                                "a předávám výsledek Gemini.",
                             )
 
                 except Exception as change_error:
@@ -614,7 +751,9 @@ def run_agent() -> int:
             elif action == "analyze_only":
                 last_test = {
                     "success": False,
-                    "reason": "Pouze analýza; úkol zatím není dokončen.",
+                    "reason": (
+                        "Pouze analýza; úkol zatím není dokončen."
+                    ),
                 }
 
             elif action == "finish":
@@ -626,6 +765,7 @@ def run_agent() -> int:
                     turn_record["test"] = last_test
                     STATUS["turns_history"].append(turn_record)
                     STATUS["status"] = "SUCCESS"
+
                     STATUS["final_result"] = {
                         "success": True,
                         "message": explanation,
@@ -643,7 +783,9 @@ def run_agent() -> int:
                         last_test,
                     )
 
-                    return commit_successful_parser(task["target_file"])
+                    return commit_successful_parser(
+                        task["target_file"]
+                    )
 
                 last_test = {
                     "success": False,
@@ -658,7 +800,11 @@ def run_agent() -> int:
 
             write_status(
                 "Test dokončen" if last_test else "Čekám na další krok",
-                json.dumps(last_test, ensure_ascii=False) if last_test else "",
+                (
+                    json.dumps(last_test, ensure_ascii=False)
+                    if last_test
+                    else ""
+                ),
             )
 
             make_dashboard_data(
@@ -670,6 +816,7 @@ def run_agent() -> int:
             time.sleep(1)
 
         STATUS["status"] = "MAX_TURNS"
+
         STATUS["final_result"] = {
             "success": False,
             "message": "Dosažen maximální počet komunikačních kol.",
@@ -691,6 +838,7 @@ def run_agent() -> int:
 
     except Exception as exc:
         STATUS["status"] = "ERROR"
+
         STATUS["final_result"] = {
             "success": False,
             "message": safe_text(exc, 3000),
@@ -712,6 +860,7 @@ def run_agent() -> int:
 
 def commit_successful_parser(target_name: str) -> int:
     """Commit only a tested parser change; never deploy parser code via FTP."""
+
     try:
         subprocess.run(
             ["git", "config", "user.name", "AI Agent Bot"],
@@ -720,7 +869,12 @@ def commit_successful_parser(target_name: str) -> int:
         )
 
         subprocess.run(
-            ["git", "config", "user.email", "agent@users.noreply.github.com"],
+            [
+                "git",
+                "config",
+                "user.email",
+                "agent@users.noreply.github.com",
+            ],
             cwd=ROOT,
             check=True,
         )
@@ -738,7 +892,12 @@ def commit_successful_parser(target_name: str) -> int:
 
         if diff.returncode == 1:
             subprocess.run(
-                ["git", "commit", "-m", "AI Agent: tested Tesco parser update"],
+                [
+                    "git",
+                    "commit",
+                    "-m",
+                    "AI Agent: tested Tesco parser update",
+                ],
                 cwd=ROOT,
                 check=True,
             )
