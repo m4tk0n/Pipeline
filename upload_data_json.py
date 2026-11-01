@@ -1,63 +1,59 @@
-import os
-import sys
+#!/usr/bin/env python3
+"""Upload dashboard JSON files to Webzdarma using FTP temporary-file replacement."""
 import ftplib
 import io
+import os
+import sys
+from pathlib import Path
 
-def env(name, default=""):
+
+def env(name: str, default: str = "") -> str:
     return (os.environ.get(name) or default).strip()
 
-def connect():
-    # Používáme přesně vaše názvy z GitHub Secrets
-    host = env("FTP_SERVER")
-    user = env("FTP_USERNAME")
-    pw = env("FTP_PASSWORD")
-    
-    if not (host and user and pw):
-        sys.exit("Chybí FTP_SERVER, FTP_USERNAME nebo FTP_PASSWORD v GitHub Secrets.")
-        
-    ftp = ftplib.FTP(timeout=60)
-    ftp.connect(host, 21)
-    ftp.login(user, pw)
-    ftp.set_pasv(True)
-    ftp.voidcmd("TYPE I")
-    return ftp
 
-def goto_dir(ftp, path):
-    if path.startswith("/"):
-        ftp.cwd("/")
-    for part in [p for p in path.split("/") if p]:
+def upload_one(ftp: ftplib.FTP, local_name: str, remote_name: str, remote_dir: str) -> None:
+    path = Path(local_name)
+    if not path.is_file():
+        print(f"Přeskakuji {local_name}: soubor neexistuje.")
+        return
+    ftp.cwd("/")
+    for part in [part for part in remote_dir.split("/") if part]:
         try:
             ftp.cwd(part)
         except ftplib.error_perm:
             ftp.mkd(part)
             ftp.cwd(part)
-
-def upload_file():
-    target = "pipeline"  # Cílová složka na Webzdarma
-    print(f"🔌 Připojuji se k FTP serveru ({env('FTP_SERVER')})...")
-    ftp = connect()
-    
-    goto_dir(ftp, target)
-    
-    filename = "data.json"
-    if not os.path.exists(filename):
-        sys.exit(f"Lokální soubor {filename} neexistuje!")
-        
-    with open(filename, "rb") as f:
-        data_bytes = f.read()
-        
-    tmp = filename + ".part"
-    print(f"📤 Nahrávám {filename} přes .part...")
-    ftp.storbinary(f"STOR {tmp}", io.BytesIO(data_bytes))
-    
+    temp_name = remote_name + ".part"
+    payload = path.read_bytes()
+    ftp.storbinary(f"STOR {temp_name}", io.BytesIO(payload))
     try:
-        ftp.delete(filename)
-    except Exception:
+        ftp.delete(remote_name)
+    except ftplib.error_perm:
         pass
-    ftp.rename(tmp, filename)
-    
-    print(f"✅ Soubor {filename} úspěšně nahrán do složky {target}!")
-    ftp.quit()
+    ftp.rename(temp_name, remote_name)
+    print(f"Nahráno {local_name} -> {remote_dir}/{remote_name} ({len(payload)} B)")
+
+
+def main() -> int:
+    host, user, password = env("FTP_SERVER"), env("FTP_USERNAME"), os.environ.get("FTP_PASSWORD", "")
+    if not (host and user and password):
+        print("Chybí FTP_SERVER, FTP_USERNAME nebo FTP_PASSWORD.", file=sys.stderr)
+        return 1
+    ftp = ftplib.FTP(timeout=30)
+    try:
+        ftp.connect(host, 21)
+        ftp.login(user, password)
+        ftp.set_pasv(True)
+        remote_dir = env("FTP_REMOTE_DIR", "pipeline")
+        upload_one(ftp, "data.json", "data.json", remote_dir)
+        upload_one(ftp, "live_status.json", "live_status.json", remote_dir)
+        return 0
+    finally:
+        try:
+            ftp.quit()
+        except Exception:
+            ftp.close()
+
 
 if __name__ == "__main__":
-    upload_file()
+    raise SystemExit(main())
