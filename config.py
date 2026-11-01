@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Cesta: Pipeline/config.py
 """Small standard-library .env loader. Existing process variables always win."""
 from __future__ import annotations
 
@@ -11,7 +12,17 @@ def load_dotenv(path: str | Path | None = None) -> None:
     if not env_path.is_file():
         return
 
-    for raw_line in env_path.read_text(encoding="utf-8-sig").splitlines():
+    raw_bytes = env_path.read_bytes()
+    for encoding in ("utf-8-sig", "cp1250"):
+        try:
+            text = raw_bytes.decode(encoding)
+            break
+        except UnicodeDecodeError:
+            continue
+    else:
+        text = raw_bytes.decode("utf-8", errors="replace")
+
+    for raw_line in text.splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#"):
             continue
