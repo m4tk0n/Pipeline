@@ -30,6 +30,10 @@ RESULT_LOCAL = ROOT / RESULT_REMOTE
 RUN_TIMEOUT = max(5, ar._int_env("CUSTOM_RUN_TIMEOUT_SECONDS", 60))
 MAX_AI_TURNS = min(ar.MAX_TURNS, max(1, ar._int_env("CUSTOM_MAX_TURNS", 8)))
 MAX_SONDA = 20000
+# Soubory vystup_*.json, které skript po sobě zanechá, se nahrají na server (vedle index.php).
+OUTPUT_RE = re.compile(r"^vystup_[A-Za-z0-9_\-]{1,50}\.json$")
+MAX_OUT_FILES = 5
+MAX_OUT_BYTES = 8_000_000
 
 FILE_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_\-]{0,59}\.py$")
 # Soubory, které by po přepsání mohly ohrozit samotného agenta a jeho tajemství.
@@ -125,6 +129,35 @@ def run_file(name: str) -> dict[str, Any]:
     }
 
 
+def clear_outputs() -> None:
+    for path in ROOT.glob("vystup_*.json"):
+        if OUTPUT_RE.fullmatch(path.name):
+            path.unlink(missing_ok=True)
+
+
+def upload_outputs() -> tuple[list[dict[str, Any]], str]:
+    """Nahraje vystup_*.json na server. Vrací (seznam souborů, poznámka o chybě)."""
+    found = sorted(p for p in ROOT.glob("vystup_*.json") if OUTPUT_RE.fullmatch(p.name) and p.is_file())
+    if not found:
+        return [], ""
+    files: list[dict[str, Any]] = []
+    try:
+        ftp = ftp_util.connect(timeout=30)
+        try:
+            ftp_util.cd_remote_dir(ftp, ar.FTP_DIR)
+            for path in found[:MAX_OUT_FILES]:
+                size = path.stat().st_size
+                if size > MAX_OUT_BYTES:
+                    return files, f"Soubor {path.name} je příliš velký ({size // 1024} kB)."
+                ftp_util.upload_file(ftp, path, path.name)
+                files.append({"name": path.name, "size": size})
+        finally:
+            ftp_util.close(ftp)
+    except Exception as exc:  # noqa: BLE001
+        return files, "Nahrání výstupu selhalo: " + safe_text(exc, 300)
+    return files, ""
+
+
 def compose_sonda(run: dict[str, Any] | None) -> str:
     if not run:
         return ""
@@ -201,6 +234,7 @@ def main() -> int:
     ar.write_status("Agent spuštěn", f"Zadání {run_id} načteno.", status="RUNNING")
 
     status, message, run = "ERROR", "", None
+    output_files: list[dict[str, Any]] = []
     try:
         name = check_file_name(file_name)
         wrote = False
@@ -209,11 +243,17 @@ def main() -> int:
             wrote = True
             ar.write_status("Kód zapsán", f"{name}: {len(code)} znaků")
 
+        clear_outputs()
         run = run_file(name)
+        output_files, upload_note = upload_outputs()
         ar.write_status("Soubor spuštěn", f"{name}: exit {run['exit_code']}, {run['duration_s']} s")
         status = "SUCCESS" if run["exit_code"] == 0 else "FAILED"
         message = "Soubor proběhl úspěšně." if status == "SUCCESS" else "Soubor skončil chybou."
 
+        if output_files:
+            message += " Výstup nahrán na server: " + ", ".join(f["name"] for f in output_files) + "."
+        if upload_note:
+            message += " " + upload_note
         if status == "SUCCESS" and wrote:
             message += " " + commit_files([name])
 
@@ -229,6 +269,7 @@ def main() -> int:
         "exit_code": run["exit_code"] if run else None,
         "duration_s": run["duration_s"] if run else None,
         "sonda": compose_sonda(run),
+        "files": output_files,
         "finished": now(),
     })
 
