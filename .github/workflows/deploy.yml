@@ -1,4 +1,4 @@
-name: Run AI Agent & Deploy Dashboard
+name: Run Parser & Deploy Dashboard
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       task_json:
-        description: 'JSON zadani agenta (nepovinne; prazdne = task.json nebo vychozi ukol)'
+        description: 'Ignoruje se (zpetna kompatibilita s dashboardem)'
         required: false
         type: string
 
@@ -14,18 +14,16 @@ permissions:
   contents: write
 
 concurrency:
-  group: pipeline-ai-agent
+  group: pipeline-parser
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  run-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -35,16 +33,116 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade requests
 
-      - name: Run multi-turn Gemini agent
+      - name: Apply patch from dashboard (optional)
+        if: ${{ github.event.inputs.task_json != '' }}
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           TASK_JSON: ${{ github.event.inputs.task_json }}
-        run: python agent_runner.py
+        run: |
+          printf '%s' "$TASK_JSON" > task_input.json
+          python - <<'EOF'
+          import json
+          import pathlib
+          import sys
 
-      - name: Upload final dashboard data
+          with open("task_input.json", encoding="utf-8") as f:
+              data = json.load(f)
+
+          patch = data.get("patch")
+          if not patch:
+              print("task_json neobsahuje pole 'patch'; pokracuji bez zmen.")
+              sys.exit(0)
+
+          target = patch.get("file", "itesco_parser.py")
+          path = pathlib.Path(target)
+          text = path.read_text(encoding="utf-8")
+
+          for edit in patch.get("edits", []):
+              old, new = edit["old_text"], edit["new_text"]
+              count = text.count(old)
+              if count != 1:
+                  print(f"PATCH CHYBA: old_text nalezen {count}x v {target}, ocekavan 1x. Nic neaplikovano.")
+                  sys.exit(1)
+              text = text.replace(old, new, 1)
+
+          compile(text, target, "exec")
+          path.write_text(text, encoding="utf-8")
+          print(f"Patch aplikovan do {target}; spoustim test parseru.")
+          EOF
+
+      - name: Run parser
+        id: parser
+        run: |
+          set +e
+          python itesco_parser.py > parser_output.txt 2>&1
+          code=$?
+          set -e
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          cat parser_output.txt
+
+      - name: Write status files
+        run: |
+          python - <<'EOF'
+          import datetime as dt
+          import json
+
+          code = int("""${{ steps.parser.outputs.exit_code }}""")
+          out = open("parser_output.txt", errors="replace").read()[-8000:]
+          now = dt.datetime.now(dt.timezone.utc).isoformat()
+          ok = code == 0
+
+          run_status = {
+              "status": "SUCCESS" if ok else "FAILED",
+              "exit_code": code,
+              "last_run": now,
+              "output_tail": out,
+          }
+          open("run_status.json", "w", encoding="utf-8").write(
+              json.dumps(run_status, ensure_ascii=False, indent=2))
+
+          log_entry = {"time": now, "event": "Parser", "detail": out[-2000:]}
+          live = {
+              "status": "SUCCESS" if ok else "FAILED",
+              "current_turn": 1 if not ok else 0,
+              "max_turns": 1,
+              "current_activity": "Parser dokoncen" if ok else "Parser selhal",
+              "last_update": now,
+              "logs": [log_entry],
+              "turns_history": [{"turn": 1, "action": "run_parser",
+                                 "time": now, "test": {"success": ok}}],
+          }
+          open("live_status.json", "w", encoding="utf-8").write(
+              json.dumps(live, ensure_ascii=False, indent=2))
+
+          dashboard = {
+              "status": "SUCCESS" if ok else "FAILED",
+              "last_run": now,
+              "tasks_completed": 1 if ok else 0,
+              "commits_count": 0,
+              "errors_resolved": 0,
+              "current_task": "Tesco Rajhrad parser",
+              "task_progress": 100 if ok else 0,
+              "task_time": "-",
+              "logs": [f"[{now}] Parser: " + out[-1000:]],
+              "commits": [],
+              "conversation": [],
+          }
+          open("data.json", "w", encoding="utf-8").write(
+              json.dumps(dashboard, ensure_ascii=False, indent=2))
+          EOF
+
+      - name: Commit result to repository
+        run: |
+          git config user.name "Pipeline Bot"
+          git config user.email "pipeline@users.noreply.github.com"
+          git add run_status.json live_status.json data.json itesco_rajhrad_data.json itesco_parser.py
+          if ! git diff --cached --quiet; then
+            git commit -m "Parser run: ${{ steps.parser.outputs.exit_code == '0' && 'OK' || 'FAILED' }} [skip ci]"
+            git push
+          else
+            echo "Zadna zmena dat ke commitu."
+          fi
+
+      - name: Upload dashboard data via FTP
         if: always()
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
