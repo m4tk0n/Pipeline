@@ -665,6 +665,8 @@ def run_agent() -> int:
 
     try:
         task = load_task()
+        # Zadání z dashboardu (TASK_JSON) má vždy přednost před zkratkou "parser už funguje".
+        explicit_task = bool(os.getenv("TASK_JSON", "").strip())
         task_label = str(task["task"])
         task_text = json.dumps(task, ensure_ascii=False, indent=2)
 
@@ -678,7 +680,7 @@ def run_agent() -> int:
         last_test: dict[str, Any] | None = run_allowed_test(task["validation"])
         write_status("Výchozí test dokončen", json.dumps(last_test, ensure_ascii=False))
 
-        if last_test.get("success"):
+        if last_test.get("success") and not explicit_task:
             # Parser už funguje: žádný dotaz na AI není potřeba (šetří kvótu).
             STATUS["status"] = "SUCCESS"
             STATUS["final_result"] = {"success": True, "message": "Výchozí test prošel, úprava není potřeba."}
