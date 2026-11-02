@@ -22,7 +22,7 @@ OUTPUT = Path(__file__).resolve().parent / "itesco_rajhrad_data.json"
 BASE = "https://www.itesco.cz"
 STORE_URL = f"{BASE}/akcni-nabidky/letaky-a-katalogy/tesco-supermarket-rajhrad"
 API_URL = "https://api.prod.retail.tesco.com/marketing/leaflets-be/graphql"
-COUNTRY = "CZ"
+COUNTRY = "cz"
 QUERY_NAME = "getLeafletPages"
 
 FLYER_LINK_RE = re.compile(
