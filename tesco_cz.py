@@ -1,26 +1,28 @@
 #!/usr/bin/env python3
-"""Nabídka z aktuálního letáku Tesco Supermarket Rajhrad: jeden záznam na produkt.
+"""Nabídka z aktuálního letáku Tesco Supermarket Rajhrad -> JSON ve stejném formátu jako Aldi.
 
-Pole: id (Tesco), name, brand, amount, unit, url_image, url_product, valid_from, valid_to
-(+ description, price, pages, amount_text, name_leaflet).
+Výstup: vystup_tesco_cz.json  {"meta": {...}, "products": [...]}  (pole i pořadí podle vzoru).
+Runner ho po běhu nahraje na server, ve třetím poli dashboardu bude odkaz.
 
 Postup:
   1. Z viewera zjistí očekávaný počet stran a z JS dotaz getLeafletPages.
   2. Zkouší volání API (leafletType/storeId z dat stránky), dokud počet stran nesedí.
   3. Z položek letáku složí záznamy (ID z odkazu /products/<ID>, platnost z letáku).
-  4. Chybějící údaje (značka, obrázek, čistý obsah, plný název) doplní ze stránky produktu
-     na nakup.itesco.cz; když to obchod blokuje, pokračuje jen s daty z letáku.
-  5. Vypíše dávku produktů (OD, DAVKA) jako JSON řádky; další dávku zjistíš z patičky.
+  4. Údaje z letáku doplní ze stránky produktu na nakup.itesco.cz (značka, obrázek, čistý
+     obsah, běžná cena, kategorie); když obchod blokuje, zůstanou data z letáku.
 Využívá pomocné funkce z itesco_parser.py.
 """
 import concurrent.futures as cf
 import datetime as dt
+import hashlib
 import json
 import re
 import sys
 import threading
 import time
+import uuid
 from html import unescape
+from pathlib import Path
 from urllib.parse import urljoin
 
 import requests
@@ -28,13 +30,11 @@ import requests
 import itesco_parser as ip
 
 SHOP_URL = "https://nakup.itesco.cz/shop/cs-CZ/products/{}"
-# ---- NASTAVENÍ (stačí přepsat číslo v poli 2 na dashboardu a spustit znovu) ----
-OD = 0                     # od kolikátého produktu (podle pořadí v letáku) vypisovat
-DAVKA = 40                 # kolik produktů vypsat najednou (výstup má limit 20 000 znaků)
-# --------------------------------------------------------------------------------
+OUT_FILE = Path(__file__).resolve().parent / "vystup_tesco_cz.json"
+STORE_ID, STORE_URL_ROOT, COUNTRY, CURRENCY = "tesco_cz", "https://www.itesco.cz", "CZ", "CZK"
+SOURCE, TYPE = "tesco_letak_rajhrad", "leaflet"
 ENRICH_SECONDS = 60        # na doplňování ze stránek produktů (běh má limit 120 s)
-MAX_LIST = 16500           # znaků na seznam produktů ve výstupu
-FIELDS = ("id", "name", "brand", "amount", "unit", "url_image", "url_product", "valid_from", "valid_to")
+NONFOOD = {"uklid", "drogerie", "dite", "zvire", "domov-a-zabava"}   # horní kategorie obchodu
 BASE_VARS = {"country", "slug"}
 HEADERS = {
     "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -168,7 +168,7 @@ def page_stats(leaflet):
 
 
 def find_leaflet(session):
-    """Vrátí (leaflet, popis volání, proměnné, shoda, očekávané stránky) nebo None."""
+    """Vrátí (leaflet, popis volání, proměnné, shoda, očekávané stránky, URL letáku) nebo None."""
     store_html = ip._get(session, ip.STORE_URL).text
     links = []
     for match in ip.FLYER_LINK_RE.finditer(store_html):
@@ -226,7 +226,7 @@ def find_leaflet(session):
         print(f"[pokus] {label}: stran {count} (č. {first}–{last}), shoda s viewerem: "
               f"{'ANO' if match else 'NE'}\n        {cut(json.dumps(scalars, ensure_ascii=False), 300)}")
         if best is None or (match and not best[3]):
-            best = (leaflet, label, variables, match, expected)
+            best = (leaflet, label, variables, match, expected, flyer_url)
         if match:
             break
     if best is None:
@@ -398,7 +398,16 @@ def parse_shop(page_html):
     if content:
         amount, unit = float(content.group(1).replace(",", ".")), content.group(2).lower()
 
+    description = metas.get("og:description") or metas.get("description") or ""
+    regular = re.search(r"Běžná cena\s*([\d.,]+)\s*Kč", description)
+    club = re.search(r"Clubcard cena\s*([\d.,]+)\s*Kč", description)
+    paths = [h for h in re.findall(r"/browse/([a-z0-9\-]+(?:/[a-z0-9\-]+)*)/all", page_html) if "/" in h]
+    deepest = max(paths, key=lambda h: h.count("/")) if paths else None
+
     return {
+        "price_regular": regular.group(1) if regular else None,
+        "price_club": club.group(1) if club else None,
+        "category_top": deepest.split("/")[0] if deepest else None,
         "name": (product.get("name") or metas.get("og:title") or "").strip() or None,
         "brand": str(brand).strip() if brand else None,
         "url_image": image,
@@ -426,7 +435,7 @@ def enrich(records):
             return pid, None, f"HTTP {response.status_code}"
         return pid, parse_shop(response.text), None
 
-    with cf.ThreadPoolExecutor(max_workers=8) as pool:
+    with cf.ThreadPoolExecutor(max_workers=10) as pool:
         for future in cf.as_completed([pool.submit(work, pid) for pid in ids]):
             pid, info, error = future.result()
             if info:
@@ -447,6 +456,9 @@ def enrich(records):
         record["name"] = info["name"] or record["name"]
         record["brand"] = info["brand"] or record["brand"]
         record["url_image"] = info["url_image"] or record["url_image"]
+        record["price_regular"] = info["price_regular"]
+        record["price_club"] = info["price_club"]
+        record["category_top"] = info["category_top"]
         if info["amount"] is not None or info["unit"]:
             record["amount"], record["unit"] = info["amount"], info["unit"]
             record["amount_text"] = info["amount_text"] or record["amount_text"]
@@ -460,6 +472,91 @@ def first_page(record):
     return min(pages) if pages else 0
 
 
+def money(value):
+    try:
+        number = float(str(value).replace(",", ".").strip())
+    except ValueError:
+        return ""
+    return f"{number:.2f}" if number > 0 else ""
+
+
+def comparison(price, amount, unit):
+    """Srovnávací cena a základ (1 KG / 1 L / 1 KS) – počítá se z ceny a množství."""
+    if not price:
+        return "", ""
+    value = float(price)
+    if unit in ("kg", "l"):
+        factor, per = (amount if amount is not None else 1.0), "1 KG" if unit == "kg" else "1 L"
+    elif unit == "g" and amount:
+        factor, per = amount / 1000, "1 KG"
+    elif unit in ("ml", "cl", "dl") and amount:
+        factor, per = amount / {"ml": 1000, "cl": 100, "dl": 10}[unit], "1 L"
+    elif unit == "ks" and amount:
+        factor, per = amount, "1 KS"
+    else:
+        return "", ""
+    return f"{value / factor:.2f}", per
+
+
+def clean_name(name, brand, amount, unit, amount_text):
+    """Z názvu odstraní úvodní značku a koncové množství (značka a množství mají vlastní pole)."""
+    result = " ".join(str(name or "").split())
+    if brand and result.lower().startswith(brand.lower()):
+        result = result[len(brand):].lstrip(" -–,:")
+    patterns = []
+    if amount_text:
+        patterns.append(re.escape(amount_text).replace(r"\ ", r"\s*"))
+    if amount is not None and unit:
+        number = re.escape(f"{amount:g}").replace(r"\.", "[.,]")
+        patterns.append(number + r"\s*" + re.escape(unit))
+    for pattern in patterns:
+        stripped = re.sub(r"[\s,\-–]*" + pattern + r"\s*$", "", result, flags=re.I)
+        if stripped and stripped != result:
+            result = stripped
+            break
+    return result.strip() or " ".join(str(name or "").split())
+
+
+def to_schema(r, source_date, confidence):
+    price = money(r.get("price")) or money(r.get("price_club")) or money(r.get("price_regular"))
+    regular = money(r.get("price_regular"))
+    original = regular if regular and price and abs(float(regular) - float(price)) > 0.004 else ""
+    club_price = money(r.get("price_club"))
+    is_club = bool(club_price and price and abs(float(club_price) - float(price)) < 0.005)
+    comp_price, comp_per = comparison(price, r["amount"], r["unit"])
+    brand = (r.get("brand") or "").strip()
+    top = r.get("category_top")
+    return {
+        "store_product_id": r["id"] or "",
+        "brand": brand,
+        "name": clean_name(r["name"], brand, r["amount"], r["unit"], r.get("amount_text")),
+        "amount": f"{r['amount']:g}" if r["amount"] is not None else "",
+        "unit": r["unit"] or "",
+        "product_url": r["url_product"] or "",
+        "image_url": r["url_image"] or "",
+        "category": ("nepotraviny" if top in NONFOOD else "potraviny") if top else "",
+        "price": price,
+        "original_price": original,
+        "comparison_price": comp_price,
+        "comparison_per": comp_per,
+        "valid_from": r["valid_from"] or "",
+        "valid_to": r["valid_to"] or "",
+        "source_date": source_date,
+        "theme": r["description"] or "",
+        "tags": ["clubcard"] if is_club else [],
+        "deposit": "",
+        "deposit_type": "",
+        "approx_amount": False,
+        "drained_weight": False,
+        "variants": False,
+        "source": SOURCE,
+        "type": TYPE,
+        "validity_source": "leaflet_api",
+        "validity_confidence": confidence,
+        "validity_type": "promo",
+    }
+
+
 def main():
     session = requests.Session()
     session.headers.update(HEADERS)
@@ -467,49 +564,66 @@ def main():
     best = find_leaflet(session)
     if best is None:
         return 2
-    leaflet, label, variables, match, expected = best
+    leaflet, label, variables, match, expected, flyer_url = best
     records, first_flat = build_records(leaflet)
     records.sort(key=lambda r: (first_page(r), r["name"]))
     count = page_stats(leaflet)[0]
-    total = len(records)
 
-    start = max(0, int(OD))
-    chunk = records[start:start + max(1, int(DAVKA))]
-    stats = enrich(chunk)          # doplňuje se jen vypisovaná dávka (rychlé)
+    stats = enrich(records)
+
+    now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
+    try:
+        from zoneinfo import ZoneInfo
+        source_date = now.astimezone(ZoneInfo("Europe/Prague")).date().isoformat()
+    except Exception:  # noqa: BLE001
+        source_date = now.date().isoformat()
+    products = [to_schema(r, source_date, "high" if match else "low") for r in records]
+    digest = hashlib.sha256(json.dumps(
+        products, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+    document = {
+        "meta": {
+            "generated_at": now.isoformat(),
+            "store": STORE_ID,
+            "store_url": STORE_URL_ROOT,
+            "country": COUNTRY,
+            "currency": CURRENCY,
+            "source": SOURCE,
+            "type": TYPE,
+            "source_url": flyer_url,
+            "product_count": len(products),
+            "content_hash": "sha256:" + digest,
+            "file_id": str(uuid.uuid4()),
+            "run_id": now.strftime("%Y%m%d_%H%M%S") + "-" + uuid.uuid4().hex[:8],
+        },
+        "products": products,
+    }
+
+    def filled(key):
+        return sum(1 for p in products if p[key])
 
     print()
     print("=" * 60)
     print(f"Leták: id {leaflet.get('id')}, typ {leaflet.get('type')} | platnost "
           f"{local_date(leaflet.get('validFrom'))} → {local_date(leaflet.get('validTo'))}")
-    print(f"Stránek: {count} (viewer: {expected}) | produktů celkem: {total}")
+    print(f"Stránek: {count} (viewer: {expected}) | produktů: {len(products)}")
     print(f"Volání: {label} {json.dumps(variables, ensure_ascii=False)}")
-    print(f"Obchod (dávka): doplněno {stats['ok']}, chyb {stats['fail']}, přeskočeno {stats['skipped']}"
+    print(f"Obchod: doplněno {stats['ok']}, chyb {stats['fail']}, přeskočeno {stats['skipped']}"
           + (f" {json.dumps(stats['errors'], ensure_ascii=False)}" if stats["errors"] else ""))
-    if not match:
-        print("VAROVÁNÍ: počet stran NESEDÍ s viewerem – pravděpodobně jiný leták (např. hypermarket).")
-    if start == 0:
-        print("Pole položky letáku:", cut(", ".join(first_flat) or "-", 300))
+    print(f"Vyplněno: ID {filled('store_product_id')}, značka {filled('brand')}, množství {filled('amount')}, "
+          f"obrázek {filled('image_url')}, běžná cena {filled('original_price')}, kategorie {filled('category')}")
+    print("Pole položky letáku:", cut(", ".join(first_flat) or "-", 300))
     print("=" * 60)
 
-    used = shown = 0
-    for record in chunk:
-        line = json.dumps({k: record[k] for k in FIELDS}, ensure_ascii=False, separators=(",", ":"))
-        if used + len(line) > MAX_LIST:
-            break
-        print(line)
-        used += len(line) + 1
-        shown += 1
+    if not match:
+        print("VAROVÁNÍ: počet stran NESEDÍ s viewerem – pravděpodobně jiný leták (např. hypermarket).")
+        print("Soubor se NEZAPISUJE, aby nepřepsal správná data.")
+        return 3
 
-    print("-" * 60)
-    end = start + shown
-    if end < total:
-        print(f"Zobrazeno {start + 1}–{end} z {total}. Další dávka: nastav OD = {end}")
-    else:
-        print(f"Zobrazeno {start + 1}–{end} z {total}. Hotovo, to je celý leták.")
-
-    if not records:
-        return 2
-    return 0 if match else 3
+    OUT_FILE.write_text(json.dumps(document, ensure_ascii=False, indent=4), encoding="utf-8")
+    print(f"Soubor: {OUT_FILE.name} ({OUT_FILE.stat().st_size // 1024} kB) – odkaz bude pod polem výstupu")
+    print("Ukázka (meta + 2 produkty):")
+    print(json.dumps({"meta": document["meta"], "products": products[:2]}, ensure_ascii=False, indent=2))
+    return 0 if products else 2
 
 
 if __name__ == "__main__":
