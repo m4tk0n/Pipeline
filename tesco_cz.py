@@ -36,7 +36,7 @@ STORE_ID, STORE_URL_ROOT, COUNTRY, CURRENCY = "tesco_cz", "https://www.itesco.cz
 SOURCE, TYPE = "tesco_letak_rajhrad", "leaflet"
 # Diagnostika: např. HLEDEJ = "MANDARINK" nebo ID produktu vypíše surová data položky letáku
 # a pole, která API nabízí (místo JSON souboru).
-HLEDEJ = "2001018012663"
+HLEDEJ = "2001013564945"
 ENRICH_SECONDS = 60        # na doplňování ze stránek produktů (běh má limit 120 s)
 NONFOOD = {"uklid", "drogerie", "dite", "zvire", "domov-a-zabava"}   # horní kategorie obchodu
 BASE_VARS = {"country", "slug"}
@@ -394,6 +394,30 @@ def period_prices(period):
     return None, None, False
 
 
+def derive_original(periods, current, price):
+    """Původní cena pro případ "Clubcard cena -> cena pro všechny".
+
+    Když dřív (před aktuálním obdobím) platila Clubcard cena rovná dnešní ceně a běžná cena byla
+    vyšší, je tato běžná cena původní cenou. Když takové období neexistuje, vrací None
+    (původní cena se nehádá)."""
+    start = parse_ts(current.get("promoStart"))
+    if not start or not price:
+        return None
+    best = None
+    for period in periods or []:
+        if period is current or not isinstance(period, dict):
+            continue
+        end = parse_ts(period.get("promoEnd"))
+        cc, normal = period.get("ccPrice"), period.get("normalNewPrice")
+        if not end or end > start or not positive(cc) or not positive(normal):
+            continue
+        if abs(cc - price) > 0.004 or normal <= cc:
+            continue
+        if best is None or end > best[0]:
+            best = (end, normal)
+    return best[1] if best else None
+
+
 def pick_period(periods, start, end):
     """Cenové období překrývající platnost letáku (API vrací celoroční historii).
 
@@ -442,6 +466,8 @@ def build_records(leaflet):
             continue
         period = pick_period(inner.get("productPeriods"), leaflet_start, leaflet_end)
         price, original, club = period_prices(period) if period else (None, None, False)
+        if period and original is None and not club:
+            original = derive_original(inner.get("productPeriods"), period, price)
         amount, unit, amount_text = parse_amount(name)
         image = pick(flat, r"image|img|photo|picture|thumb|png", lambda v: str(v).startswith(("http", "//")))
         brand = pick(flat, r"brand") or None
@@ -590,41 +616,59 @@ def enrich(records):
 
 # ----------------------------------------------------------------- hlavní běh
 
-TYPE_QUERY = ("query($n:String!){__type(name:$n){name fields{name type{name kind "
-              "ofType{name kind ofType{name kind ofType{name kind}}}}}}}")
-SCHEMA_HINT = re.compile(r"price|promo|period|offer|discount|tag|label|sale|original|regular|club", re.I)
+PROBES = (
+    ("LeafletProduct", r"fragment\s+CustomerProductByPositionItem\s+on\s+LeafletProduct\s*\{", (
+        "brand", "price", "prices", "discount", "promoText", "promoOfferDescription", "promoOfferText",
+        "promoOfferType", "priceText", "description", "title", "name", "label", "labels", "tags", "category",
+        "position", "order", "unit", "amount", "quantity", "validFrom", "validTo", "validity", "periodId",
+        "image", "imageUrl", "productId", "tpnb", "tpnc", "gtin", "sortOrder", "type")),
+    ("product", r"\bproduct\s*\{", (
+        "id", "tpnb", "tpnc", "gtin", "gtin13", "brand", "brandName", "category", "categoryName",
+        "superDepartmentName", "departmentName", "aisleName", "shelfName", "description", "price", "prices",
+        "regularPrice", "originalPrice", "oldPrice", "previousPrice", "normalPrice", "basePrice", "listPrice",
+        "wasPrice", "unitPrice", "unitOfMeasure", "unitOfMeasureCode", "contentsQuantity", "contentsMeasureType",
+        "averageWeight", "imageUrl", "imageURL", "image", "images", "name", "title", "slug", "url", "status",
+        "isForSale", "baseProductId", "packSize", "weight", "volume", "size", "brandId", "categoryId",
+        "promotions", "promotion", "offers", "discount", "discountPercent", "departmentId", "isAlcohol")),
+    ("productPeriods", r"\bproductPeriods\s*\{", (
+        "originalPrice", "oldPrice", "previousPrice", "regularPrice", "normalPrice", "basePrice", "listPrice",
+        "wasPrice", "price", "unitPrice", "normalUnitPrice", "normalNewUnitPrice", "ccOldPrice", "ccNormalPrice",
+        "normalOldPrice", "oldNormalPrice", "newPrice", "discount", "discountPercent", "discountPercentage",
+        "percentOff", "saving", "promoType", "promoName", "promoDescription", "promoText", "description",
+        "offerText", "offerType", "mechanic", "type", "name", "status", "periodStart", "periodEnd",
+        "storeFormat", "storeId", "leafletType", "unit", "currency", "isClubcard", "clubcardOnly", "clubcard",
+        "validFrom", "validTo", "tpnb", "productId", "brand")),
+)
 
 
-def unwrap_type(node):
-    while isinstance(node, dict) and not node.get("name") and node.get("ofType"):
-        node = node["ofType"]
-    return (node or {}).get("name")
+def probe_fields(session, document, variables):
+    """Zjistí názvy polí, která API nabízí: dotaz s kandidáty vrátí chybu jen pro neexistující pole."""
+    for label, anchor, names in PROBES:
+        modified, hits = re.subn(anchor, lambda m: m.group(0) + " " + " ".join(names) + " ", document, count=1)
+        if not hits:
+            print(f"[sonda] {label}: v dotazu nenalezeno místo pro vložení")
+            continue
+        try:
+            response = session.post(
+                ip.API_URL, json={"query": modified, "variables": variables},
+                headers={"Content-Type": "application/json", "Accept": "application/json",
+                         "Origin": ip.BASE, "Referer": ip.BASE + "/"}, timeout=45)
+            payload = response.json()
+        except (requests.RequestException, ValueError) as exc:
+            print(f"[sonda] {label}: {type(exc).__name__}")
+            continue
+        errors = [str(e.get("message", "")) for e in payload.get("errors") or [] if isinstance(e, dict)]
+        text = "\n".join(errors)
+        types = sorted(set(re.findall(r'on type "(\w+)"', text)))
+        missing = {n for n in names if f'Cannot query field "{n}"' in text}
+        existing = [n for n in names if n not in missing]
+        print(f"[sonda] {label} (typ {', '.join(types) or '?'}): zamítnuto {len(missing)}/{len(names)}; "
+              f"existují: {', '.join(existing) or '-'}")
+        for message in [e for e in errors if "Cannot query field" not in e][:5]:
+            print("   ", cut(message, 240))
 
 
-def show_type(session, name, seen):
-    """Vypíše pole typu přes GraphQL introspekci (pokud ji API povoluje)."""
-    if not name or name in seen:
-        return {}
-    seen.add(name)
-    try:
-        response = session.post(
-            ip.API_URL, json={"query": TYPE_QUERY, "variables": {"n": name}},
-            headers={"Content-Type": "application/json", "Accept": "application/json",
-                     "Origin": ip.BASE, "Referer": ip.BASE + "/"}, timeout=30)
-        payload = response.json()
-    except (requests.RequestException, ValueError) as exc:
-        print(f"[schéma] {name}: {type(exc).__name__}")
-        return {}
-    node = (payload.get("data") or {}).get("__type")
-    if not node:
-        print(f"[schéma] {name}: " + cut(json.dumps(payload.get("errors") or "typ nenalezen", ensure_ascii=False), 200))
-        return {}
-    fields = {f["name"]: unwrap_type(f["type"]) for f in node.get("fields") or []}
-    print(f"[schéma] {name}: " + cut(", ".join(f"{k}:{v}" for k, v in fields.items()), 1500))
-    return fields
-
-
-def diagnose(leaflet, document, session):
+def diagnose(leaflet, document, session, variables):
     """Vypíše GraphQL dotaz (pole, která leták vrací) a surové položky odpovídající HLEDEJ."""
     print()
     print("=" * 60)
@@ -646,14 +690,7 @@ def diagnose(leaflet, document, session):
     if not found:
         print("Nic nenalezeno.")
     print("=" * 60)
-    seen = set()
-    product_fields = show_type(session, "LeafletProduct", seen)
-    inner_fields = show_type(session, product_fields.get("product"), seen)
-    for fields in (product_fields, inner_fields):
-        for key, type_name in list(fields.items()):
-            if SCHEMA_HINT.search(key) and type_name and not type_name.startswith(("String", "Int", "Float", "Boolean", "ID")):
-                show_type(session, type_name, seen)
-    show_type(session, "LeafletMetadataPagePosition", seen)
+    probe_fields(session, document, variables)
     print("=" * 60)
     print("Po zjištění vrať HLEDEJ = \"\" (jinak se nevytvoří JSON).")
     return 0
@@ -762,7 +799,7 @@ def main():
         return 2
     leaflet, label, variables, match, expected, flyer_url, document = best
     if HLEDEJ:
-        return diagnose(leaflet, document, session)
+        return diagnose(leaflet, document, session, variables)
     records, first_flat = build_records(leaflet)
     records.sort(key=lambda r: (first_page(r), r["name"]))
     count = page_stats(leaflet)[0]
