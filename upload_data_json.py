@@ -11,7 +11,7 @@ import ftp_util
 ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / ".env")
 
-FILES = ("data.json", "live_status.json", "itesco_rajhrad_data.json")
+FILES = ("data.json", "live_status.json", "itesco_rajhrad_data.json", "custom_result.json")
 
 
 def main() -> int:
