@@ -9,6 +9,14 @@ on:
         description: 'JSON zadani agenta (nepovinne; prazdne = task.json nebo vychozi ukol)'
         required: false
         type: string
+      custom_run:
+        description: 'true = spustit zadani z dashboardu (custom_runner.py)'
+        required: false
+        type: string
+      run_id:
+        description: 'Identifikator zadani z dashboardu'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -35,7 +43,18 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade requests
 
+      - name: Run dashboard task (bez AI)
+        if: github.event.inputs.custom_run == 'true'
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          RUN_ID: ${{ github.event.inputs.run_id }}
+          CUSTOM_RUN_TIMEOUT_SECONDS: '120'
+        run: python custom_runner.py
+
       - name: Run multi-turn Gemini agent
+        if: github.event.inputs.custom_run != 'true'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
