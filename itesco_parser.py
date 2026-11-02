@@ -108,6 +108,10 @@ def extract_documents(js_texts: list[str]) -> tuple[str | None, dict[str, str]]:
             pos = literal.find(match.group(0))
             if pos >= 0:
                 fragments[name] = _balanced(literal, pos)
+    if "CustomerProductByPositionItem" in fragments:
+        f = fragments["CustomerProductByPositionItem"]
+        if "productPeriods" in f and "ccPrice" not in f:
+            fragments["CustomerProductByPositionItem"] = f.replace("productPeriods {", "productPeriods { ccPrice ccUnitPrice normalNewPrice ")
     return query, fragments
 
 
@@ -125,19 +129,17 @@ def build_document(query: str, fragments: dict[str, str]) -> str:
 
 # ---------- zpracování odpovědi ----------
 
-def _find_price(*nodes, depth: int = 2) -> str:
-    for node in nodes:
-        if not isinstance(node, dict):
-            continue
+def _find_price(item: dict, product: dict) -> str:
+    periods = product.get("productPeriods") or []
+    for period in periods:
+        for key in ["ccPrice", "ccUnitPrice", "normalNewPrice"]:
+            val = period.get(key)
+            if val is not None and str(val).strip():
+                return str(val).strip()
+    for node in [item, product]:
         for key, value in node.items():
-            if "price" in key.lower() and isinstance(value, (str, int, float)) and str(value).strip():
+            if any(p in key.lower() for p in ["price", "amount"]) and isinstance(value, (str, int, float)) and str(value).strip():
                 return str(value).strip()
-        if depth > 0:
-            for value in node.values():
-                if isinstance(value, dict):
-                    found = _find_price(value, depth=depth - 1)
-                    if found:
-                        return found
     return ""
 
 
