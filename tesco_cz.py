@@ -34,8 +34,9 @@ SHOP_URL = "https://nakup.itesco.cz/shop/cs-CZ/products/{}"
 OUT_FILE = Path(__file__).resolve().parent / "vystup_tesco_cz.json"
 STORE_ID, STORE_URL_ROOT, COUNTRY, CURRENCY = "tesco_cz", "https://www.itesco.cz", "CZ", "CZK"
 SOURCE, TYPE = "tesco_letak_rajhrad", "leaflet"
-# Diagnostika: např. HLEDEJ = "MANDARINK" vypíše surová data položky letáku (místo JSON souboru).
-HLEDEJ = ""
+# Diagnostika: např. HLEDEJ = "MANDARINK" nebo ID produktu vypíše surová data položky letáku
+# a pole, která API nabízí (místo JSON souboru).
+HLEDEJ = "2001018012663"
 ENRICH_SECONDS = 60        # na doplňování ze stránek produktů (běh má limit 120 s)
 NONFOOD = {"uklid", "drogerie", "dite", "zvire", "domov-a-zabava"}   # horní kategorie obchodu
 BASE_VARS = {"country", "slug"}
@@ -67,6 +68,7 @@ SHOP_HEADERS = {
 
 # Značky poznané podle začátku názvu (bez diakritiky a interpunkce). Doplňuj podle výpisu
 # "Bez značky" ve výstupu: "začátek názvu": "Značka". Delší klíč má přednost.
+# Hodnota ("Značka", False) = značku vyplnit, ale v názvu ji ponechat (řada výrobku, např. Lipánek).
 BRANDS = {
     "ts": "Tesco", "tesco": "Tesco", "bv": "Babiččina volba", "babiccina volba": "Babiččina volba",
     "milka": "Milka", "milko": "Milko", "hellmann's": "Hellmann's", "gambrinus": "Gambrinus",
@@ -85,6 +87,8 @@ BRANDS = {
     "kostelecke uzeniny": "Kostelecké uzeniny", "kostelecke uzen": "Kostelecké uzeniny",
     "kotanyi": "Kotányi", "labeta": "Labeta", "tropicane": "Tropicane",
     "olomoucke tvaruzky": "Olomoucké tvarůžky",
+    "lipanek": ("Madeta", False), "madeland": ("Madeta", False), "madetka": ("Madeta", False),
+    "zottarella": ("Zott", False),
 }
 
 
@@ -93,7 +97,10 @@ def norm(text):
     return "".join(ch for ch in text if ch.isalnum() and not unicodedata.combining(ch))
 
 
-BRAND_KEYS = sorted(((norm(k), v) for k, v in BRANDS.items()), key=lambda kv: -len(kv[0]))
+BRAND_KEYS = sorted(
+    ((norm(k), (v[0] if isinstance(v, tuple) else v), (v[1] if isinstance(v, tuple) else True))
+     for k, v in BRANDS.items()),
+    key=lambda item: -len(item[0]))
 
 
 def detect_brand(name, promo):
@@ -103,9 +110,9 @@ def detect_brand(name, promo):
         for i in range(1, len(text) + 1):
             if i == len(text) or not text[i].isalnum():
                 ends.setdefault(norm(text[:i]), i)
-        for key, brand in BRAND_KEYS:
+        for key, brand, strip_name in BRAND_KEYS:
             if key in ends:
-                return brand, (ends[key] if strip else 0)
+                return brand, (ends[key] if strip and strip_name else 0)
     return None, 0
 
 
@@ -583,7 +590,41 @@ def enrich(records):
 
 # ----------------------------------------------------------------- hlavní běh
 
-def diagnose(leaflet, document):
+TYPE_QUERY = ("query($n:String!){__type(name:$n){name fields{name type{name kind "
+              "ofType{name kind ofType{name kind ofType{name kind}}}}}}}")
+SCHEMA_HINT = re.compile(r"price|promo|period|offer|discount|tag|label|sale|original|regular|club", re.I)
+
+
+def unwrap_type(node):
+    while isinstance(node, dict) and not node.get("name") and node.get("ofType"):
+        node = node["ofType"]
+    return (node or {}).get("name")
+
+
+def show_type(session, name, seen):
+    """Vypíše pole typu přes GraphQL introspekci (pokud ji API povoluje)."""
+    if not name or name in seen:
+        return {}
+    seen.add(name)
+    try:
+        response = session.post(
+            ip.API_URL, json={"query": TYPE_QUERY, "variables": {"n": name}},
+            headers={"Content-Type": "application/json", "Accept": "application/json",
+                     "Origin": ip.BASE, "Referer": ip.BASE + "/"}, timeout=30)
+        payload = response.json()
+    except (requests.RequestException, ValueError) as exc:
+        print(f"[schéma] {name}: {type(exc).__name__}")
+        return {}
+    node = (payload.get("data") or {}).get("__type")
+    if not node:
+        print(f"[schéma] {name}: " + cut(json.dumps(payload.get("errors") or "typ nenalezen", ensure_ascii=False), 200))
+        return {}
+    fields = {f["name"]: unwrap_type(f["type"]) for f in node.get("fields") or []}
+    print(f"[schéma] {name}: " + cut(", ".join(f"{k}:{v}" for k, v in fields.items()), 1500))
+    return fields
+
+
+def diagnose(leaflet, document, session):
     """Vypíše GraphQL dotaz (pole, která leták vrací) a surové položky odpovídající HLEDEJ."""
     print()
     print("=" * 60)
@@ -604,6 +645,15 @@ def diagnose(leaflet, document):
             break
     if not found:
         print("Nic nenalezeno.")
+    print("=" * 60)
+    seen = set()
+    product_fields = show_type(session, "LeafletProduct", seen)
+    inner_fields = show_type(session, product_fields.get("product"), seen)
+    for fields in (product_fields, inner_fields):
+        for key, type_name in list(fields.items()):
+            if SCHEMA_HINT.search(key) and type_name and not type_name.startswith(("String", "Int", "Float", "Boolean", "ID")):
+                show_type(session, type_name, seen)
+    show_type(session, "LeafletMetadataPagePosition", seen)
     print("=" * 60)
     print("Po zjištění vrať HLEDEJ = \"\" (jinak se nevytvoří JSON).")
     return 0
@@ -646,7 +696,8 @@ def clean_name(name, brand, amount, unit, amount_text, strip_len=0):
     if strip_len:
         raw = raw[strip_len:].lstrip(" -–,:.")
     result = " ".join(raw.split())
-    if not strip_len and brand and result.lower().startswith(brand.lower()):
+    if (not strip_len and brand and result.lower().startswith(brand.lower())
+            and (len(result) == len(brand) or not result[len(brand)].isalnum())):
         result = result[len(brand):].lstrip(" -–,:")
     patterns = []
     if amount_text:
@@ -711,7 +762,7 @@ def main():
         return 2
     leaflet, label, variables, match, expected, flyer_url, document = best
     if HLEDEJ:
-        return diagnose(leaflet, document)
+        return diagnose(leaflet, document, session)
     records, first_flat = build_records(leaflet)
     records.sort(key=lambda r: (first_page(r), r["name"]))
     count = page_stats(leaflet)[0]
