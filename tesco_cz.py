@@ -33,6 +33,8 @@ SHOP_URL = "https://nakup.itesco.cz/shop/cs-CZ/products/{}"
 OUT_FILE = Path(__file__).resolve().parent / "vystup_tesco_cz.json"
 STORE_ID, STORE_URL_ROOT, COUNTRY, CURRENCY = "tesco_cz", "https://www.itesco.cz", "CZ", "CZK"
 SOURCE, TYPE = "tesco_letak_rajhrad", "leaflet"
+# Diagnostika: např. HLEDEJ = "MANDARINK" vypíše surová data položky letáku (místo JSON souboru).
+HLEDEJ = ""
 ENRICH_SECONDS = 60        # na doplňování ze stránek produktů (běh má limit 120 s)
 NONFOOD = {"uklid", "drogerie", "dite", "zvire", "domov-a-zabava"}   # horní kategorie obchodu
 BASE_VARS = {"country", "slug"}
@@ -168,7 +170,7 @@ def page_stats(leaflet):
 
 
 def find_leaflet(session):
-    """Vrátí (leaflet, popis volání, proměnné, shoda, očekávané stránky, URL letáku) nebo None."""
+    """Vrátí (leaflet, popis volání, proměnné, shoda, očekávané stránky, URL letáku, dotaz) nebo None."""
     store_html = ip._get(session, ip.STORE_URL).text
     links = []
     for match in ip.FLYER_LINK_RE.finditer(store_html):
@@ -226,7 +228,7 @@ def find_leaflet(session):
         print(f"[pokus] {label}: stran {count} (č. {first}–{last}), shoda s viewerem: "
               f"{'ANO' if match else 'NE'}\n        {cut(json.dumps(scalars, ensure_ascii=False), 300)}")
         if best is None or (match and not best[3]):
-            best = (leaflet, label, variables, match, expected, flyer_url)
+            best = (leaflet, label, variables, match, expected, flyer_url, document)
         if match:
             break
     if best is None:
@@ -467,6 +469,32 @@ def enrich(records):
 
 # ----------------------------------------------------------------- hlavní běh
 
+def diagnose(leaflet, document):
+    """Vypíše GraphQL dotaz (pole, která leták vrací) a surové položky odpovídající HLEDEJ."""
+    print()
+    print("=" * 60)
+    print("DIAGNOSTIKA – hledám:", HLEDEJ)
+    print("GraphQL dotaz a fragmenty:")
+    print(re.sub(r"\s+", " ", document)[:5000])
+    found = 0
+    for item, _inner, position, number in extract_items(leaflet):
+        text = json.dumps(item, ensure_ascii=False)
+        if HLEDEJ.lower() not in text.lower():
+            continue
+        found += 1
+        print(f"--- položka {found} (strana {number}) ---")
+        print(text[:2500])
+        rest = {k: v for k, v in position.items() if k != "products"}
+        print("pozice:", json.dumps(rest, ensure_ascii=False)[:600])
+        if found >= 3:
+            break
+    if not found:
+        print("Nic nenalezeno.")
+    print("=" * 60)
+    print("Po zjištění vrať HLEDEJ = \"\" (jinak se nevytvoří JSON).")
+    return 0
+
+
 def first_page(record):
     pages = [p for p in record["pages"] if isinstance(p, int)]
     return min(pages) if pages else 0
@@ -564,7 +592,9 @@ def main():
     best = find_leaflet(session)
     if best is None:
         return 2
-    leaflet, label, variables, match, expected, flyer_url = best
+    leaflet, label, variables, match, expected, flyer_url, document = best
+    if HLEDEJ:
+        return diagnose(leaflet, document)
     records, first_flat = build_records(leaflet)
     records.sort(key=lambda r: (first_page(r), r["name"]))
     count = page_stats(leaflet)[0]
