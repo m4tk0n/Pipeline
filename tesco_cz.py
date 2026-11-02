@@ -34,7 +34,7 @@ OUT_FILE = Path(__file__).resolve().parent / "vystup_tesco_cz.json"
 STORE_ID, STORE_URL_ROOT, COUNTRY, CURRENCY = "tesco_cz", "https://www.itesco.cz", "CZ", "CZK"
 SOURCE, TYPE = "tesco_letak_rajhrad", "leaflet"
 # Diagnostika: např. HLEDEJ = "MANDARINK" vypíše surová data položky letáku (místo JSON souboru).
-HLEDEJ = "MANDARINK"
+HLEDEJ = ""
 ENRICH_SECONDS = 60        # na doplňování ze stránek produktů (běh má limit 120 s)
 NONFOOD = {"uklid", "drogerie", "dite", "zvire", "domov-a-zabava"}   # horní kategorie obchodu
 BASE_VARS = {"country", "slug"}
@@ -307,8 +307,62 @@ def extract_items(leaflet):
                     yield item, inner, position, page.get("page")
 
 
+def parse_ts(value):
+    try:
+        return dt.datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def positive(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and value > 0
+
+
+def period_prices(period):
+    """(cena, původní cena, clubcard) z jednoho cenového období.
+
+    Clubcard cena platí jen když je NIŽŠÍ než běžná (normalNewPrice). Je-li stejná nebo vyšší,
+    je to chybný záznam a použije se běžná cena."""
+    cc = period.get("ccPrice") if positive(period.get("ccPrice")) else None
+    normal = period.get("normalNewPrice") if positive(period.get("normalNewPrice")) else None
+    if cc and normal:
+        return (cc, normal, True) if cc < normal else (normal, None, False)
+    if cc:
+        return cc, None, True
+    if normal:
+        return normal, None, False
+    return None, None, False
+
+
+def pick_period(periods, start, end):
+    """Cenové období překrývající platnost letáku (API vrací celoroční historii).
+
+    Při více kandidátech vyhrává nejnižší cena, při shodě delší překryv. Vrací None,
+    když žádné období neodpovídá (cena pak zůstane prázdná, nehádá se)."""
+    best = None
+    if not (start and end):
+        return None
+    for period in periods or []:
+        if not isinstance(period, dict):
+            continue
+        p_start, p_end = parse_ts(period.get("promoStart")), parse_ts(period.get("promoEnd"))
+        if not (p_start and p_end):
+            continue
+        overlap = (min(p_end, end) - max(p_start, start)).total_seconds()
+        if overlap < 3600:
+            continue
+        price = period_prices(period)[0]
+        if price is None:
+            continue
+        key = (price, -overlap)
+        if best is None or key < best[0]:
+            best = (key, period)
+    return best[1] if best else None
+
+
 def build_records(leaflet):
     valid_from, valid_to = local_date(leaflet.get("validFrom")), local_date(leaflet.get("validTo"))
+    leaflet_start, leaflet_end = parse_ts(leaflet.get("validFrom")), parse_ts(leaflet.get("validTo"))
     records, by_key = [], {}
     first_flat = None
     for item, inner, position, number in extract_items(leaflet):
@@ -326,9 +380,10 @@ def build_records(leaflet):
             if number not in by_key[key]["pages"]:
                 by_key[key]["pages"].append(number)
             continue
-        price = ip._find_price(item, inner)
+        period = pick_period(inner.get("productPeriods"), leaflet_start, leaflet_end)
+        price, original, club = period_prices(period) if period else (None, None, False)
         amount, unit, amount_text = parse_amount(name)
-        image = pick(flat, r"image|img|photo|picture|thumb", lambda v: str(v).startswith(("http", "//")))
+        image = pick(flat, r"image|img|photo|picture|thumb|png", lambda v: str(v).startswith(("http", "//")))
         record = {
             "id": str(pid) if pid else None,
             "name": name,
@@ -337,10 +392,13 @@ def build_records(leaflet):
             "unit": unit,
             "url_image": image,
             "url_product": SHOP_URL.format(pid) if pid else (url or None),
-            "valid_from": valid_from,
-            "valid_to": valid_to,
+            "valid_from": local_date(period.get("promoStart")) if period else valid_from,
+            "valid_to": local_date(period.get("promoEnd")) if period else valid_to,
             "description": str(item.get("promoOfferName") or "").strip() or None,
-            "price": None if str(price).strip() in ("", "0", "0.0") else price,
+            "price": price,
+            "price_original": original,
+            "club": club,
+            "period": period.get("periodName") if period else None,
             "pages": [number],
             "amount_text": amount_text,
             "name_leaflet": name,
@@ -400,15 +458,13 @@ def parse_shop(page_html):
     if content:
         amount, unit = float(content.group(1).replace(",", ".")), content.group(2).lower()
 
-    description = metas.get("og:description") or metas.get("description") or ""
-    regular = re.search(r"Běžná cena\s*([\d.,]+)\s*Kč", description)
-    club = re.search(r"Clubcard cena\s*([\d.,]+)\s*Kč", description)
+    before = re.search(r"předtím\s*([\d.,]+)\s*Kč", text)
+
     paths = [h for h in re.findall(r"/browse/([a-z0-9\-]+(?:/[a-z0-9\-]+)*)/all", page_html) if "/" in h]
     deepest = max(paths, key=lambda h: h.count("/")) if paths else None
 
     return {
-        "price_regular": regular.group(1) if regular else None,
-        "price_club": club.group(1) if club else None,
+        "price_before": before.group(1) if before else None,
         "category_top": deepest.split("/")[0] if deepest else None,
         "name": (product.get("name") or metas.get("og:title") or "").strip() or None,
         "brand": str(brand).strip() if brand else None,
@@ -458,8 +514,7 @@ def enrich(records):
         record["name"] = info["name"] or record["name"]
         record["brand"] = info["brand"] or record["brand"]
         record["url_image"] = info["url_image"] or record["url_image"]
-        record["price_regular"] = info["price_regular"]
-        record["price_club"] = info["price_club"]
+        record["price_before"] = info["price_before"]
         record["category_top"] = info["category_top"]
         if info["amount"] is not None or info["unit"]:
             record["amount"], record["unit"] = info["amount"], info["unit"]
@@ -546,11 +601,11 @@ def clean_name(name, brand, amount, unit, amount_text):
 
 
 def to_schema(r, source_date, confidence):
-    price = money(r.get("price")) or money(r.get("price_club")) or money(r.get("price_regular"))
-    regular = money(r.get("price_regular"))
-    original = regular if regular and price and abs(float(regular) - float(price)) > 0.004 else ""
-    club_price = money(r.get("price_club"))
-    is_club = bool(club_price and price and abs(float(club_price) - float(price)) < 0.005)
+    price = money(r.get("price"))
+    original = money(r.get("price_original"))
+    if not original:
+        before = money(r.get("price_before"))     # "předtím X Kč" ze stránky produktu
+        original = before if before and price and float(before) > float(price) else ""
     comp_price, comp_per = comparison(price, r["amount"], r["unit"])
     brand = (r.get("brand") or "").strip()
     top = r.get("category_top")
@@ -571,7 +626,7 @@ def to_schema(r, source_date, confidence):
         "valid_to": r["valid_to"] or "",
         "source_date": source_date,
         "theme": r["description"] or "",
-        "tags": ["clubcard"] if is_club else [],
+        "tags": ["clubcard"] if r.get("club") else [],
         "deposit": "",
         "deposit_type": "",
         "approx_amount": False,
@@ -640,7 +695,10 @@ def main():
     print(f"Obchod: doplněno {stats['ok']}, chyb {stats['fail']}, přeskočeno {stats['skipped']}"
           + (f" {json.dumps(stats['errors'], ensure_ascii=False)}" if stats["errors"] else ""))
     print(f"Vyplněno: ID {filled('store_product_id')}, značka {filled('brand')}, množství {filled('amount')}, "
-          f"obrázek {filled('image_url')}, běžná cena {filled('original_price')}, kategorie {filled('category')}")
+          f"obrázek {filled('image_url')}, cena {filled('price')}, původní cena {filled('original_price')}, "
+          f"kategorie {filled('category')}")
+    print("Ceny: z období letáku:", sum(1 for r in records if r.get("period")),
+          "| bez odpovídajícího období:", sum(1 for r in records if not r.get("period")))
     print("Pole položky letáku:", cut(", ".join(first_flat) or "-", 300))
     print("=" * 60)
 
