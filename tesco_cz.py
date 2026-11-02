@@ -20,6 +20,7 @@ import re
 import sys
 import threading
 import time
+import unicodedata
 import uuid
 from html import unescape
 from pathlib import Path
@@ -54,6 +55,58 @@ ENTITY_KEYS = {
     "store": ("store", "storeId"),
 }
 UNITS = r"(kg|g|ml|cl|dl|l|ks)"
+SHOP_HEADERS = {
+    **HEADERS,
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Referer": "https://www.itesco.cz/",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "same-site",
+}
+
+# Značky poznané podle začátku názvu (bez diakritiky a interpunkce). Doplňuj podle výpisu
+# "Bez značky" ve výstupu: "začátek názvu": "Značka". Delší klíč má přednost.
+BRANDS = {
+    "ts": "Tesco", "tesco": "Tesco", "bv": "Babiččina volba", "babiccina volba": "Babiččina volba",
+    "milka": "Milka", "milko": "Milko", "hellmann's": "Hellmann's", "gambrinus": "Gambrinus",
+    "habanske sklepy": "Habánské sklepy", "hab sklepy": "Habánské sklepy", "magnesia": "Magnesia",
+    "schubert": "Schubert", "captain morgan": "Captain Morgan", "cpt morgan": "Captain Morgan",
+    "hello": "Hello", "madeta": "Madeta", "president": "Président", "bonitas": "Bonitas",
+    "titbit": "Titbit", "breadway": "Breadway", "ehrmann": "Ehrmann", "nowaco": "Nowaco",
+    "primator": "Primátor", "zott": "Zott", "florian": "Florian",
+    "franz j kaiser": "Franz Josef Kaiser", "franz josef kaiser": "Franz Josef Kaiser",
+    "jar": "Jar", "krahulik": "Krahulík", "dr oetker": "Dr. Oetker", "gold plus": "Gold Plus",
+    "excelent": "Excelent", "krusovice": "Krušovice", "vp kozel": "Velkopopovický Kozel",
+    "velkopopovicky kozel": "Velkopopovický Kozel", "corny": "Corny", "haribo": "Haribo",
+    "kinder": "Kinder", "kmotr": "Kmotr", "lindt": "Lindt", "marlenka": "Marlenka",
+    "nestle": "Nestlé", "pez": "PEZ", "riegelein": "Riegelein", "sedita": "Sedita",
+    "adriana": "Adriana", "bohemia": "Bohemia", "bonavita": "Bonavita",
+    "kostelecke uzeniny": "Kostelecké uzeniny", "kostelecke uzen": "Kostelecké uzeniny",
+    "kotanyi": "Kotányi", "labeta": "Labeta", "tropicane": "Tropicane",
+    "olomoucke tvaruzky": "Olomoucké tvarůžky",
+}
+
+
+def norm(text):
+    text = unicodedata.normalize("NFKD", str(text).casefold())
+    return "".join(ch for ch in text if ch.isalnum() and not unicodedata.combining(ch))
+
+
+BRAND_KEYS = sorted(((norm(k), v) for k, v in BRANDS.items()), key=lambda kv: -len(kv[0]))
+
+
+def detect_brand(name, promo):
+    """(značka, počet znaků názvu k odstranění). Hledá se na začátku názvu a pak názvu akce."""
+    for text, strip in ((str(name or ""), True), (str(promo or ""), False)):
+        ends = {}
+        for i in range(1, len(text) + 1):
+            if i == len(text) or not text[i].isalnum():
+                ends.setdefault(norm(text[:i]), i)
+        for key, brand in BRAND_KEYS:
+            if key in ends:
+                return brand, (ends[key] if strip else 0)
+    return None, 0
 
 
 def cut(text, width):
@@ -384,10 +437,15 @@ def build_records(leaflet):
         price, original, club = period_prices(period) if period else (None, None, False)
         amount, unit, amount_text = parse_amount(name)
         image = pick(flat, r"image|img|photo|picture|thumb|png", lambda v: str(v).startswith(("http", "//")))
+        brand = pick(flat, r"brand") or None
+        strip = 0
+        if not brand:
+            brand, strip = detect_brand(name, item.get("promoOfferName"))
         record = {
             "id": str(pid) if pid else None,
             "name": name,
-            "brand": pick(flat, r"brand") or None,
+            "name_strip": strip,
+            "brand": brand,
             "amount": amount,
             "unit": unit,
             "url_image": image,
@@ -417,7 +475,7 @@ def shop_session():
     session = getattr(_local, "session", None)
     if session is None:
         session = requests.Session()
-        session.headers.update(HEADERS)
+        session.headers.update(SHOP_HEADERS)
         _local.session = session
     return session
 
@@ -511,7 +569,8 @@ def enrich(records):
         info = results.get(record["id"])
         if not info:
             continue
-        record["name"] = info["name"] or record["name"]
+        if info["name"]:
+            record["name"], record["name_strip"] = info["name"], 0
         record["brand"] = info["brand"] or record["brand"]
         record["url_image"] = info["url_image"] or record["url_image"]
         record["price_before"] = info["price_before"]
@@ -581,10 +640,13 @@ def comparison(price, amount, unit):
     return f"{value / factor:.2f}", per
 
 
-def clean_name(name, brand, amount, unit, amount_text):
+def clean_name(name, brand, amount, unit, amount_text, strip_len=0):
     """Z názvu odstraní úvodní značku a koncové množství (značka a množství mají vlastní pole)."""
-    result = " ".join(str(name or "").split())
-    if brand and result.lower().startswith(brand.lower()):
+    raw = str(name or "")
+    if strip_len:
+        raw = raw[strip_len:].lstrip(" -–,:.")
+    result = " ".join(raw.split())
+    if not strip_len and brand and result.lower().startswith(brand.lower()):
         result = result[len(brand):].lstrip(" -–,:")
     patterns = []
     if amount_text:
@@ -612,7 +674,7 @@ def to_schema(r, source_date, confidence):
     return {
         "store_product_id": r["id"] or "",
         "brand": brand,
-        "name": clean_name(r["name"], brand, r["amount"], r["unit"], r.get("amount_text")),
+        "name": clean_name(r["name"], brand, r["amount"], r["unit"], r.get("amount_text"), r.get("name_strip", 0)),
         "amount": f"{r['amount']:g}" if r["amount"] is not None else "",
         "unit": r["unit"] or "",
         "product_url": r["url_product"] or "",
@@ -699,6 +761,12 @@ def main():
           f"kategorie {filled('category')}")
     print("Ceny: z období letáku:", sum(1 for r in records if r.get("period")),
           "| bez odpovídajícího období:", sum(1 for r in records if not r.get("period")))
+    unbranded = []
+    for r in records:
+        if not r.get("brand") and r["name"] not in unbranded:
+            unbranded.append(r["name"])
+    print(f"Bez značky ({len([r for r in records if not r.get('brand')])}): "
+          + cut("; ".join(unbranded[:25]), 700))
     print("Pole položky letáku:", cut(", ".join(first_flat) or "-", 300))
     print("=" * 60)
 
