@@ -6,7 +6,7 @@
     "total_pages": 35,
     "valid_from": "2026-11-04T07:00:00.000Z",
     "valid_to": "2026-11-10T22:59:59.000Z",
-    "scraped_at": "2026-11-04T22:58:56.640107+00:00",
+    "scraped_at": "2026-11-05T13:40:35.629928+00:00",
     "error": null
   },
   "products": [
@@ -410,16 +410,9 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001130348687"
     },
     {
-      "title": "ZOTT JOGOBELLA CLASSIC 150 g",
-      "description": "Zott Jogobella",
-      "price": "9.9",
-      "page": 2,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120049584"
-    },
-    {
       "title": "ZOTT JOGOBELLA SPECIAL 150 g",
       "description": "Zott Jogobella",
-      "price": "9.9",
+      "price": "0",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018721114"
     },
@@ -429,6 +422,20 @@
       "price": "9.9",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000125302"
+    },
+    {
+      "title": "ZOTT JOGOBELLA EXOTIC 150 g",
+      "description": "Zott Jogobella",
+      "price": "0",
+      "page": 2,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020031015"
+    },
+    {
+      "title": "ZOTT JOGOBELLA CLASSIC 150 g",
+      "description": "Zott Jogobella",
+      "price": "9.9",
+      "page": 2,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120049584"
     },
     {
       "title": "ZOTT JOGOBELLA LIGHT 150 g",
@@ -443,13 +450,6 @@
       "price": "9.9",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020020937"
-    },
-    {
-      "title": "ZOTT JOGOBELLA EXOTIC 150 g",
-      "description": "Zott Jogobella",
-      "price": "9.9",
-      "page": 2,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020031015"
     },
     {
       "title": "ZOTT JOGOBELLA GARDEN EXOTIC 150 g",
@@ -517,14 +517,14 @@
     {
       "title": "SPRINGFORCE TOA. PAPÍR 2 VRSTVY 8 ROLÍ 138 m",
       "description": "TS TP 2V/8R",
-      "price": "0",
+      "price": "34.9",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100769936"
     },
     {
       "title": "SPRINGFORCE TP ALOE VERA AROMA 2 VR. 8 R. 138 m",
       "description": "TS TP 2V/8R",
-      "price": "39.9",
+      "price": "34.9",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105001537"
     },
@@ -541,6 +541,13 @@
       "price": "0",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105013848"
+    },
+    {
+      "title": "POCTIVA SUNKA OD KOSTI 100G",
+      "description": "Kostelcké uzeniny Poctivá šunka",
+      "price": "29.9",
+      "page": 6,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120510677"
     },
     {
       "title": "POCTIVA SELSKA SLANINA 100G",
@@ -562,13 +569,6 @@
       "price": "29.9",
       "page": 6,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020166814"
-    },
-    {
-      "title": "POCTIVA SUNKA OD KOSTI 100G",
-      "description": "Kostelcké uzeniny Poctivá šunka",
-      "price": "29.9",
-      "page": 6,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120510677"
     },
     {
       "title": "KOSTELECKÉ UZENINY POCTIVÁ ŠUNKA",
@@ -594,21 +594,21 @@
     {
       "title": "OLZ SANDWICH S. SOFT 375g",
       "description": "OLZ super sandwich",
-      "price": "32.9",
+      "price": "36.9",
       "page": 6,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001130852245"
     },
     {
       "title": "OLZ SANDWICH SUPER SOFT 750g",
       "description": "OLZ super sandwich",
-      "price": "52.9",
+      "price": "49.9",
       "page": 6,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020005326"
     },
     {
       "title": "OLZ SANDW.SUPER SOFT CEL.375g",
       "description": "OLZ super sandwich",
-      "price": "32.9",
+      "price": "36.9",
       "page": 6,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020005328"
     },
@@ -622,7 +622,7 @@
     {
       "title": "KOFOLA PET 2 L",
       "description": "Kofola",
-      "price": "29.9",
+      "price": "24.9",
       "page": 6,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001009255932"
     },
@@ -991,6 +991,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001124001048"
     },
     {
+      "title": "EFKO KYSANÉ ZELÍ ALU SÁCEK 500 g/450 g",
+      "description": "Efko Zelí",
+      "price": "29.9",
+      "page": 8,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000098354"
+    },
+    {
       "title": "EFKO CERVENÉ ZELÍ ALU SÁCEK 500 g/450 g",
       "description": "Efko Zelí",
       "price": "29.9",
@@ -1003,13 +1010,6 @@
       "price": "29.9",
       "page": 8,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001015915257"
-    },
-    {
-      "title": "EFKO KYSANÉ ZELÍ ALU SÁCEK 500 g/450 g",
-      "description": "Efko Zelí",
-      "price": "29.9",
-      "page": 8,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000098354"
     },
     {
       "title": "KOLONADA OPLATKY OR.&COKO.140g",
@@ -1371,49 +1371,49 @@
     {
       "title": "WHISKAS JUNIOR KAPSIČKA KLASIC. POKRMY 4 x 85 g",
       "description": "Whiskas Kapsičky pro kočky",
-      "price": "49.9",
+      "price": "59.9",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105002067"
     },
     {
-      "title": "WHISKAS KAP KREM OMACKA 4x85g",
-      "description": "Whiskas Kapsičky pro kočky",
-      "price": "49.9",
-      "page": 9,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020094725"
-    },
-    {
       "title": "WHISKAS RYBA CASSER 4x85g",
       "description": "Whiskas Kapsičky pro kočky",
-      "price": "49.9",
+      "price": "59.9",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020162683"
     },
     {
       "title": "WHISKAS DRUBEZ CASSER 4x85g",
       "description": "Whiskas Kapsičky pro kočky",
-      "price": "49.9",
+      "price": "59.9",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020162685"
     },
     {
+      "title": "WHISKAS KAP KREM OMACKA 4x85g",
+      "description": "Whiskas Kapsičky pro kočky",
+      "price": "59.9",
+      "page": 9,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020094725"
+    },
+    {
       "title": "WHISKAS KAPSIČKA KLASICKÉ POKRMY VE ŠŤÁVĚ 4x85 g",
       "description": "Whiskas Kapsičky pro kočky",
-      "price": "49.9",
+      "price": "59.9",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105002068"
     },
     {
       "title": "WHISKAS KAPSIČKA DRŮBEŽÍ HODY V ŽELÉ 4 x 85 g",
       "description": "Whiskas Kapsičky pro kočky",
-      "price": "49.9",
+      "price": "59.9",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105002069"
     },
     {
       "title": "WHISKAS TASTY MIX VENKOV. MENU DOS. KOČ. 4x85 g",
       "description": "Whiskas Kapsičky pro kočky",
-      "price": "49.9",
+      "price": "59.9",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111273905"
     },
@@ -2314,6 +2314,20 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001012168953"
     },
     {
+      "title": "GERVAIS FIT LIGHT 80 g",
+      "description": "Gervais",
+      "price": "19.9",
+      "page": 19,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120807425"
+    },
+    {
+      "title": "GERVAIS DE LA C. SMET. SÝR S ČES. A BYLINKA. 180 g",
+      "description": "Gervais de la Créme",
+      "price": "43.9",
+      "page": 19,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105323030"
+    },
+    {
       "title": "GERVAIS ORIGINAL S REDKVICKAMI A PAŽITKOU 80 g",
       "description": "Gervais",
       "price": "19.9",
@@ -2328,25 +2342,11 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020221691"
     },
     {
-      "title": "GERVAIS FIT LIGHT 80 g",
-      "description": "Gervais",
-      "price": "19.9",
-      "page": 19,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120807425"
-    },
-    {
       "title": "GERVAIS DE LA CRÉME SMETANOVÝ SÝR 180 g",
       "description": "Gervais de la Créme",
-      "price": "39.9",
+      "price": "43.9",
       "page": 19,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105322426"
-    },
-    {
-      "title": "GERVAIS DE LA C. SMET. SÝR S ČES. A BYLINKA. 180 g",
-      "description": "Gervais de la Créme",
-      "price": "39.9",
-      "page": 19,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105323030"
     },
     {
       "title": "KUNÍN SMETANA KE ŠLEHÁNÍ 31% 375 g",
@@ -2575,14 +2575,14 @@
     {
       "title": "GALBANI MOZZARELLA 125 g",
       "description": "Galbani Mozzarella",
-      "price": "23.9",
+      "price": "25.9",
       "page": 19,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019184475"
     },
     {
       "title": "GALBANI MINI MOZZARELLA 150 g",
       "description": "Galbani Mozzarella",
-      "price": "39.9",
+      "price": "38.9",
       "page": 19,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019531729"
     },
@@ -2671,18 +2671,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020225921"
     },
     {
+      "title": "KARUZO SVETLÉ CHEESECAKE TREŠEN 82 g",
+      "description": "Karuzo",
+      "price": "14.9",
+      "page": 20,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020232903"
+    },
+    {
       "title": "KARUZO SVETLÉ CHEESECAKE BORUVKA 82 g",
       "description": "Karuzo",
       "price": "14.9",
       "page": 20,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020232904"
-    },
-    {
-      "title": "KARUZO SVETLÉ COKOLÁDA 82 g",
-      "description": "Karuzo",
-      "price": "14.9",
-      "page": 20,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020225922"
     },
     {
       "title": "KARUZO CROISSAN. BUCHTA S PISTÁC. NÁPLNÍ 82 g",
@@ -2692,18 +2692,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111210310"
     },
     {
-      "title": "KARUZO SVETLÉ CHEESECAKE TREŠEN 82 g",
-      "description": "Karuzo",
-      "price": "14.9",
-      "page": 20,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020232903"
-    },
-    {
       "title": "KARUZO TMAVÉ TIRAMISU 82 g",
       "description": "Karuzo",
       "price": "14.9",
       "page": 20,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020288960"
+    },
+    {
+      "title": "KARUZO SVETLÉ COKOLÁDA 82 g",
+      "description": "Karuzo",
+      "price": "14.9",
+      "page": 20,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020225922"
     },
     {
       "title": "TORTILLY PŠENIČNÉ 240 g",
@@ -2799,7 +2799,7 @@
     {
       "title": "SENF HORCICE PLNOTUC.900g",
       "description": "Senf Hořčice",
-      "price": "39.9",
+      "price": "41.9",
       "page": 20,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120369988"
     },
@@ -3784,6 +3784,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105003500"
     },
     {
+      "title": "MAGNESIA + BOOST MINERÁLNÍ VODA J. PERLIVÁ 0,7 L",
+      "description": "Magnesia Plus",
+      "price": "24.9",
+      "page": 23,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105011885"
+    },
+    {
       "title": "MAGNESIA PLUS PŘÍCH.MERU.MARAC ŽENŠEN 0.7 L",
       "description": "Magnesia Plus",
       "price": "24.9",
@@ -3796,13 +3803,6 @@
       "price": "24.9",
       "page": 23,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105011886"
-    },
-    {
-      "title": "MAGNESIA + BOOST MINERÁLNÍ VODA J. PERLIVÁ 0,7 L",
-      "description": "Magnesia Plus",
-      "price": "24.9",
-      "page": 23,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105011885"
     },
     {
       "title": "DOBRÁ VODA LEHKÁ NESYCENÁ CITRON 1,5 L",
@@ -3910,18 +3910,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000117031"
     },
     {
-      "title": "ORION GRANKO BOX 200 g",
-      "description": "GRANKO 200g, NESQUIK",
-      "price": "64.9",
-      "page": 23,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000010509"
-    },
-    {
       "title": "NESQUIK KAKAOVY NAPOJ 400g",
       "description": "GRANKO 200g, NESQUIK",
       "price": "99.9",
       "page": 23,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000117055"
+    },
+    {
+      "title": "ORION GRANKO BOX 200 g",
+      "description": "GRANKO 200g, NESQUIK",
+      "price": "64.9",
+      "page": 23,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000010509"
     },
     {
       "title": "SIR WINST.ENGL. BREAKFAST 36g",
@@ -4031,7 +4031,7 @@
     {
       "title": "MIRINDA PŘÍCH. POMERANČ 2.25 L",
       "description": "Pepsi",
-      "price": "0",
+      "price": "32.9",
       "page": 23,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001130296004"
     },
@@ -4073,7 +4073,7 @@
     {
       "title": "PEPSI S MALINOVOU PŘÍCHUTÍ 2,25 L",
       "description": "Pepsi",
-      "price": "0",
+      "price": "32.9",
       "page": 23,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111276692"
     },
@@ -6885,18 +6885,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100332795"
     },
     {
+      "title": "SADA BITU A OCEK REIKEL 34 KS",
+      "description": "Vybrané ruční nářadí pro domácí kutily",
+      "price": "189",
+      "page": 29,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005117957610"
+    },
+    {
       "title": "SADA NARADI REIKEL 4 KS",
       "description": "Vybrané ruční nářadí pro domácí kutily*",
       "price": "199.9",
       "page": 29,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005117957702"
-    },
-    {
-      "title": "SADA BITU A OCEK REIKEL 34 KS",
-      "description": "Vybrané ruční nářadí pro domácí kutily",
-      "price": "179.9",
-      "page": 29,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005117957610"
     },
     {
       "title": "ODOLNE RUKAVICE DOTYKOVE L",
@@ -8280,7 +8280,7 @@
     {
       "title": "PŘEDMĚŘICKÁ MOUKA HRUBÁ 1kg",
       "description": "Předměřická Mouka",
-      "price": "12.9",
+      "price": "11.9",
       "page": 1,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019423338"
     },
@@ -8413,14 +8413,14 @@
     {
       "title": "COCA-COLA S KRÉM. VANILKOVOU PŘÍCHUTÍ 1,5 L",
       "description": "Coca-Cola",
-      "price": "0",
+      "price": "32.9",
       "page": 1,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001128008648"
     },
     {
       "title": "COCA-COLA ZERO S KR. VANILKOVOU PŘÍCHUTÍ 1,5 L",
       "description": "Coca-Cola",
-      "price": "0",
+      "price": "32.9",
       "page": 1,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001128008649"
     },
@@ -9386,7 +9386,7 @@
     {
       "title": "ZNOJMIA ZELÍ BÍLÉ KYSANÉ 510 g / 290 g",
       "description": "Znojmia Zelí",
-      "price": "42.9",
+      "price": "39.9",
       "page": 22,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105012355"
     },
@@ -9785,7 +9785,7 @@
     {
       "title": "Nowaco krokety 300 g",
       "description": "Nowaco Krokety",
-      "price": "22.9",
+      "price": "24.9",
       "page": 4,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000424108"
     },
@@ -9944,6 +9944,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001009996804"
     },
     {
+      "title": "MADETA BLATÁCKÉ ZLATO 120 g",
+      "description": "Blaťácké Zlato",
+      "price": "32.9",
+      "page": 4,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000136278"
+    },
+    {
       "title": "MADETA BLATÁCKÉ ZLATO",
       "description": "Blaťácké zlato",
       "price": "259",
@@ -9970,13 +9977,6 @@
       "price": "32.9",
       "page": 4,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019183041"
-    },
-    {
-      "title": "MADETA BLATÁCKÉ ZLATO 120 g",
-      "description": "Blaťácké Zlato",
-      "price": "32.9",
-      "page": 4,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000136278"
     },
     {
       "title": "MARLENKA 800g MA",
@@ -10569,7 +10569,7 @@
     {
       "title": "SPONTEX PROTECT RUKAVICE VEL.L 100 ks .",
       "description": "Spontex rukavice",
-      "price": "169.9",
+      "price": "149.9",
       "page": 27,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020347120"
     },
@@ -10744,7 +10744,7 @@
     {
       "title": "JAGERMEISTER 35 %, 0.5 l",
       "description": "Jägermeister 0,5",
-      "price": "229.9",
+      "price": "249.9",
       "page": 24,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020253167"
     },
@@ -10898,7 +10898,7 @@
     {
       "title": "BRANIK SVETLE VY CEP. 0.5L SKLO",
       "description": "Braník",
-      "price": "9.9",
+      "price": "10.9",
       "page": 24,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000112197"
     },
