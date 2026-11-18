@@ -6,7 +6,7 @@
     "total_pages": 43,
     "valid_from": "2026-11-18T07:00:00.000Z",
     "valid_to": "2026-11-24T22:59:59.000Z",
-    "scraped_at": "2026-11-18T14:45:02.931904+00:00",
+    "scraped_at": "2026-11-18T23:40:55.833269+00:00",
     "error": null
   },
   "products": [
@@ -53,6 +53,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020230692"
     },
     {
+      "title": "JČ EIDAM 20% PLÁTKY 100 g",
+      "description": "Jihočeský Eidam plátky",
+      "price": "21.9",
+      "page": 5,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020324909"
+    },
+    {
       "title": "JC EIDAM 30% PLÁTKY 100 g",
       "description": "Jihočeský Eidam plátky",
       "price": "0",
@@ -72,13 +79,6 @@
       "price": "22.9",
       "page": 5,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020005934"
-    },
-    {
-      "title": "JČ EIDAM 20% PLÁTKY 100 g",
-      "description": "Jihočeský Eidam plátky",
-      "price": "0",
-      "page": 5,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020324909"
     },
     {
       "title": "MADETA HIGH PRO. EIDAM PRO TVRDÝ SÝR 100 g",
@@ -102,25 +102,32 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100579605"
     },
     {
-      "title": "HAME MÁJKA 75g",
-      "description": "Hamé paštiky 75g",
-      "price": "14.9",
-      "page": 5,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001005125802"
-    },
-    {
       "title": "HAMÉ MATĚJ 75 g",
       "description": "Hamé paštiky 75g",
-      "price": "14.9",
+      "price": "16.9",
       "page": 5,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020347722"
     },
     {
       "title": "HAMÉ BŮČKOVÁ POMAZÁNKA 75 g",
       "description": "Hamé paštiky 75g",
-      "price": "14.9",
+      "price": "16.9",
       "page": 5,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020347712"
+    },
+    {
+      "title": "HAMÉ ŠKVARKOVÁ POMAZÁNKA 75 g",
+      "description": "Hamé paštiky 75g",
+      "price": "16.9",
+      "page": 5,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111268063"
+    },
+    {
+      "title": "HAME MÁJKA 75g",
+      "description": "Hamé paštiky 75g",
+      "price": "14.9",
+      "page": 5,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001005125802"
     },
     {
       "title": "HAMÉ SVAČINKA 75 g",
@@ -142,13 +149,6 @@
       "price": "14.9",
       "page": 5,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020347714"
-    },
-    {
-      "title": "HAMÉ ŠKVARKOVÁ POMAZÁNKA 75 g",
-      "description": "Hamé paštiky 75g",
-      "price": "14.9",
-      "page": 5,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111268063"
     },
     {
       "title": "TS VEPŘOVÁ KRKOVICE BEZ KOSTI 1K SMALL",
@@ -349,49 +349,49 @@
     {
       "title": "LIPÁNEK TVAROHOVÝ VANILKA 130 g",
       "description": "Lipánek Tvarohový",
-      "price": "16.9",
+      "price": "0",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020326768"
     },
     {
       "title": "LIPÁNEK TVAROHOVÝ KAKAO 130 g",
       "description": "Lipánek Tvarohový",
-      "price": "16.9",
+      "price": "0",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020326770"
     },
     {
       "title": "LIPANEK MAXI SMETANOVÝ 130 g",
       "description": "Lipánek Maxi",
-      "price": "16.9",
+      "price": "0",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020021536"
     },
     {
       "title": "LIPANEK MAXI JAHODOVÝ 130 g",
       "description": "Lipánek Maxi",
-      "price": "16.9",
+      "price": "0",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018397647"
     },
     {
       "title": "LIPANEK MAXI DUO KAKAOVO-BANAN. 130 g",
       "description": "Lipánek Maxi",
-      "price": "16.9",
+      "price": "0",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019627538"
     },
     {
       "title": "MADETA LIP. MAXI TRADI. TVAROHOVÝ KRÉM KOKO. 130 g",
       "description": "Lipánek Tvarohový",
-      "price": "16.9",
+      "price": "0",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111274575"
     },
     {
       "title": "MADETA LIPÁNEK TVAROHOVÝ KARAMELKA 130 g",
       "description": "Lipánek Tvarohový",
-      "price": "16.9",
+      "price": "0",
       "page": 2,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111274578"
     },
@@ -683,6 +683,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105327199"
     },
     {
+      "title": "MILKA BUBL. MLECNA 90g",
+      "description": "Milka Čokoláda",
+      "price": "29.9",
+      "page": 8,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120675199"
+    },
+    {
       "title": "MILKA PEANUT CR. CARAMEL 90g",
       "description": "Milka Čokoláda",
       "price": "29.9",
@@ -709,13 +716,6 @@
       "price": "29.9",
       "page": 8,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120675182"
-    },
-    {
-      "title": "MILKA BUBL. MLECNA 90g",
-      "description": "Milka Čokoláda",
-      "price": "29.9",
-      "page": 8,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120675199"
     },
     {
       "title": "MILKA MLÉČ. ČOK. S LÍSKOOŘÍŠKOVOU NÁPLNÍ 85 g",
@@ -1061,6 +1061,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001130914858"
     },
     {
+      "title": "DŽIUGAS KOSTKY 100 g",
+      "description": "Džiugas kostky",
+      "price": "51.9",
+      "page": 19,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020281561"
+    },
+    {
       "title": "DŽIUGAS SUŠENÝ STRO. SÝR PŘÍCH. KAR. CIBULE 80 g",
       "description": "Džiugas sušený strouhaný sýr",
       "price": "69.9",
@@ -1087,13 +1094,6 @@
       "price": "49.9",
       "page": 19,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111270826"
-    },
-    {
-      "title": "DŽIUGAS KOSTKY 100 g",
-      "description": "Džiugas kostky",
-      "price": "51.9",
-      "page": 19,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020281561"
     },
     {
       "title": "DŽIUGAS 24 MĚSÍCŮ VÝKROJ 180 g",
@@ -1222,7 +1222,7 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005101074122"
     },
     {
-      "title": "Moulinex QA140AFO Kuchynský robot",
+      "title": "Moulinex QA140AFO kuchynsky robot",
       "description": "Moulinex QA140AF0 Kuchyňský robot",
       "price": "1299",
       "page": 11,
@@ -1285,6 +1285,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000135318"
     },
     {
+      "title": "TĚSTO PRACNOVÉ LINECKÉ 500 g",
+      "description": "Těsto linecké pracnové",
+      "price": "49.9",
+      "page": 16,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001009741220"
+    },
+    {
       "title": "TĚSTO KOKOSOVÉ LINECKÉ 500 g",
       "description": "Těsto linecké kokosové",
       "price": "49.9",
@@ -1304,13 +1311,6 @@
       "price": "49.9",
       "page": 16,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001009741077"
-    },
-    {
-      "title": "TĚSTO PRACNOVÉ LINECKÉ 500 g",
-      "description": "Těsto linecké pracnové",
-      "price": "49.9",
-      "page": 16,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001009741220"
     },
     {
       "title": "TĚSTO OŘECHOVÉ LINECKÉ 500 g",
@@ -1462,7 +1462,7 @@
     {
       "title": "SVIJANSKY MAZ 11 SV.LEZ. 0,5l",
       "description": "Svijanský máz 11",
-      "price": "11.9",
+      "price": "10.9",
       "page": 33,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001008133477"
     },
@@ -1516,6 +1516,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111269293"
     },
     {
+      "title": "GUARANA ENERGY DRINK APHRODISI. 500 ml",
+      "description": "Guarana",
+      "price": "19.9",
+      "page": 33,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111269296"
+    },
+    {
       "title": "GUARANA ENERGY DRINK CLASSIC ZERO 500 ml",
       "description": "Guarana",
       "price": "19.9",
@@ -1551,11 +1558,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005116836777"
     },
     {
-      "title": "GUARANA ENERGY DRINK APHRODISI. 500 ml",
-      "description": "Guarana",
-      "price": "19.9",
+      "title": "PEPSI MAX PET 1.5l",
+      "description": "Pepsi",
+      "price": "26.9",
       "page": 33,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111269296"
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120345642"
+    },
+    {
+      "title": "PEPSI ZERO SUGAR PŘÍCHUŤ PERNÍKU 1,5 L",
+      "description": "Pepsi",
+      "price": "26.9",
+      "page": 33,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020381945"
     },
     {
       "title": "PEPSI PET 1.5l",
@@ -1563,13 +1577,6 @@
       "price": "26.9",
       "page": 33,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120388752"
-    },
-    {
-      "title": "PEPSI MAX PET 1.5l",
-      "description": "Pepsi",
-      "price": "26.9",
-      "page": 33,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120345642"
     },
     {
       "title": "MIRINDA PŘÍCH. POMERANČ 1.5 L",
@@ -1619,13 +1626,6 @@
       "price": "26.9",
       "page": 33,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020378349"
-    },
-    {
-      "title": "PEPSI ZERO SUGAR PŘÍCHUŤ PERNÍKU 1,5 L",
-      "description": "Pepsi",
-      "price": "26.9",
-      "page": 33,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020381945"
     },
     {
       "title": "ONDRÁŠOVKA PŘÍCH. LES.OVOCE 1.5 L",
@@ -2391,6 +2391,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120148518"
     },
     {
+      "title": "HAMÉ EXTRA DŽEM LESNÍ SMĚS 340 g",
+      "description": "Hamé Extra Džem",
+      "price": "59.9",
+      "page": 17,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120330014"
+    },
+    {
       "title": "HAMÉ EXTRA DŽEM MALINA 340 g",
       "description": "Hamé Extra Džem",
       "price": "59.9",
@@ -2410,13 +2417,6 @@
       "price": "59.9",
       "page": 17,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120330008"
-    },
-    {
-      "title": "HAMÉ EXTRA DŽEM LESNÍ SMĚS 340 g",
-      "description": "Hamé Extra Džem",
-      "price": "59.9",
-      "page": 17,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120330014"
     },
     {
       "title": "ON POVIDLOVÁ NÁPLŇ SE SKOŘICÍ A VŮNÍ RUMU 440g",
@@ -2452,6 +2452,13 @@
       "price": "16.9",
       "page": 17,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018968113"
+    },
+    {
+      "title": "DR. OETKER PUDING S MALIN. PŘÍCHUTÍ 38 g",
+      "description": "Dr. Oetker Puding",
+      "price": "8.9",
+      "page": 17,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020307092"
     },
     {
       "title": "DR.OETKER PUDING PŘÍCHUŤ ČOKOLÁDA 46 g",
@@ -2501,13 +2508,6 @@
       "price": "8.9",
       "page": 17,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020307091"
-    },
-    {
-      "title": "DR. OETKER PUDING S MALIN. PŘÍCHUTÍ 38 g",
-      "description": "Dr. Oetker Puding",
-      "price": "8.9",
-      "page": 17,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020307092"
     },
     {
       "title": "CUKR MOUČKA 1 kg",
@@ -2701,16 +2701,9 @@
     {
       "title": "VINIUM EXCLUSIVE PALAVA 0.75l",
       "description": "Vinium",
-      "price": "99.9",
+      "price": "119.9",
       "page": 10,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020319935"
-    },
-    {
-      "title": "HEAD & SHOULDERS CITRUS FRESH ŠAMPON  625 ml",
-      "description": "Head & Shoulders Šampony a Balzámy na vlasy",
-      "price": "0",
-      "page": 10,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111273695"
     },
     {
       "title": "HEAD & SHOULDERS APPLE FRESH ŠAM. PRO. LUP. 625 ml",
@@ -2718,6 +2711,13 @@
       "price": "209.9",
       "page": 10,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111273691"
+    },
+    {
+      "title": "HEAD & SHOULDERS CITRUS FRESH ŠAMPON  625 ml",
+      "description": "Head & Shoulders Šampony a Balzámy na vlasy",
+      "price": "0",
+      "page": 10,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111273695"
     },
     {
       "title": "HEAD & SHOULDERS CLASSIC CLEAN ŠAMPON 625 ml",
@@ -2764,9 +2764,16 @@
     {
       "title": "HELLO XXL KAP. MERUNKA 200 g",
       "description": "Hello XXL",
-      "price": "13.9",
+      "price": "0",
       "page": 10,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020291809"
+    },
+    {
+      "title": "HELLO KAPSIČKA S JABL A BROSKVEMI XXL 200 g",
+      "description": "Hello XXL",
+      "price": "0",
+      "page": 10,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020291824"
     },
     {
       "title": "HELLO KAPSIČKA S JABLKY A MANGEM XXL 200 g",
@@ -2781,13 +2788,6 @@
       "price": "13.9",
       "page": 10,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020319491"
-    },
-    {
-      "title": "HELLO KAPSIČKA S JABL A BROSKVEMI XXL 200 g",
-      "description": "Hello XXL",
-      "price": "13.9",
-      "page": 10,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020291824"
     },
     {
       "title": "HAMI BRAMB. HOV. HRASEK 250g",
@@ -3058,7 +3058,7 @@
     {
       "title": "TULLAM DEW LIKÉR S MEDEM A CHUTÍ KÁVY 35% 700 ml",
       "description": "Tullamore D.E.W. Likér s medem a chutí kávy",
-      "price": "349",
+      "price": "349.9",
       "page": 12,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111270886"
     },
@@ -3427,53 +3427,46 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001124001762"
     },
     {
+      "title": "KUNÍN MLÉČNÁ KRUPICE MIX 150 g",
+      "description": "Kunín Mléčná rýže",
+      "price": "15.9",
+      "page": 31,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020021531"
+    },
+    {
+      "title": "KUNÍN MLÉCNÁ RÝŽE MIX I. 175 g",
+      "description": "Kunín Mléčná rýže",
+      "price": "15.9",
+      "page": 31,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020021527"
+    },
+    {
+      "title": "KUNÍN OVESKA 150 g",
+      "description": "Kunín Ovesky a Krupičky",
+      "price": "17.9",
+      "page": 31,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020314387"
+    },
+    {
       "title": "KUNÍN MLÉCNÁ RÝŽE A KRUPICE MIX 150 g",
       "description": "Kunín Mléčná rýže",
-      "price": "14.9",
+      "price": "13.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018445157"
     },
     {
       "title": "KUNÍN MLÉČNÁ RÝŽE ČOKO./KOKOS 175 g",
       "description": "Kunín Mléčná rýže",
-      "price": "14.9",
+      "price": "13.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020368282"
     },
     {
-      "title": "KUNÍN MLÉCNÁ RÝŽE MIX I. 175 g",
-      "description": "Kunín Mléčná rýže",
-      "price": "14.9",
-      "page": 31,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020021527"
-    },
-    {
       "title": "KUNÍN MLÉCNÁ RÝŽE MIX II. 175 g",
       "description": "Kunín Mléčná rýže",
-      "price": "14.9",
+      "price": "13.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020021530"
-    },
-    {
-      "title": "KUNÍN MLÉČNÁ KRUPICE MIX 150 g",
-      "description": "Kunín Mléčná rýže",
-      "price": "14.9",
-      "page": 31,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020021531"
-    },
-    {
-      "title": "KUNÍN OVESKA 150 g",
-      "description": "Kunín Ovesky a Krupičky",
-      "price": "16.9",
-      "page": 31,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020314387"
-    },
-    {
-      "title": "MLÉKÁRNA KUNÍN OVESKA JAHODA 150 g",
-      "description": "Kunín Ovesky a Krupičky",
-      "price": "16.9",
-      "page": 31,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105095791"
     },
     {
       "title": "KUNÍN OVESKA PŘÍCH. JABLKO, SKOŘICE 150 g",
@@ -3483,11 +3476,25 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020314389"
     },
     {
+      "title": "MLÉKÁRNA KUNÍN OVESKA JAHODA 150 g",
+      "description": "Kunín Ovesky a Krupičky",
+      "price": "16.9",
+      "page": 31,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105095791"
+    },
+    {
       "title": "ALMETTE COTTAGE KRÉMOVÝ 150 g",
       "description": "Almette Cottage",
       "price": "29.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001128007270"
+    },
+    {
+      "title": "PREM. SMETANOVÝ JOGURT HRUŠKA, KARAMEL 150 g",
+      "description": "Prémiový Smetanový jogurt",
+      "price": "19.9",
+      "page": 31,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020288977"
     },
     {
       "title": "OPOČENSKÝ JOGURT PŘÍCHUŤ JAHODA 150 g",
@@ -3509,13 +3516,6 @@
       "price": "19.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020288975"
-    },
-    {
-      "title": "PREM. SMETANOVÝ JOGURT HRUŠKA, KARAMEL 150 g",
-      "description": "Prémiový Smetanový jogurt",
-      "price": "19.9",
-      "page": 31,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020288977"
     },
     {
       "title": "KUNÍN KEFIROVÉ MLÉKO PRÍCH. BANÁN 300 g",
@@ -3553,18 +3553,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020130368"
     },
     {
+      "title": "ZOTT PROTEIN DRINK PŘÍCHUŤ VANILKA 250 ml",
+      "description": "Zott Protein",
+      "price": "29.9",
+      "page": 31,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020289133"
+    },
+    {
       "title": "ZOTT PROTEIN DRINK PŘÍCHUŤ ČOKOLÁDA 250 ml",
       "description": "Zott Protein",
       "price": "26.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020289134"
-    },
-    {
-      "title": "ZOTT PROTEIN DRINK PŘÍCHUŤ VANILKA 250 ml",
-      "description": "Zott Protein",
-      "price": "26.9",
-      "page": 31,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020289133"
     },
     {
       "title": "ZOTT PROTEIN DR. PLUS S KARAMELO. PŘÍCHUTÍ 250 ml",
@@ -3651,16 +3651,9 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020020883"
     },
     {
-      "title": "FARMÁŘSKÝ SÝR PLÁTKY 100 g",
-      "description": "Farmářský sýr",
-      "price": "26.9",
-      "page": 31,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120601915"
-    },
-    {
       "title": "HORÁCKÝ SÝR PLÁTKY 100 g",
       "description": "Horácký sýr",
-      "price": "24.9",
+      "price": "26.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120818861"
     },
@@ -3670,6 +3663,13 @@
       "price": "26.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105013155"
+    },
+    {
+      "title": "FARMÁŘSKÝ SÝR PLÁTKY 100 g",
+      "description": "Farmářský sýr",
+      "price": "26.9",
+      "page": 31,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120601915"
     },
     {
       "title": "SMETANITO SÝR NA GRIL A NA PÁNEV 200 g",
@@ -3691,6 +3691,13 @@
       "price": "82.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105480506"
+    },
+    {
+      "title": "DANONE YOPRO DEZERT S KARAME. PŘÍCHUTÍ 200 g",
+      "description": "Danone YoPro Protein",
+      "price": "29.9",
+      "page": 31,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001126001190"
     },
     {
       "title": "DANONE YOPRO JOGURTOVÝ NÁPOJ PŘÍCH.STRAC.300g",
@@ -3733,13 +3740,6 @@
       "price": "19.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105008467"
-    },
-    {
-      "title": "DANONE YOPRO DEZERT S KARAME. PŘÍCHUTÍ 200 g",
-      "description": "Danone YoPro Protein",
-      "price": "29.9",
-      "page": 31,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001126001190"
     },
     {
       "title": "DANONE YOPRO PRO. DEZ. S VAN. PŘÍCHUTÍ 200 g",
@@ -3882,18 +3882,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105115437"
     },
     {
-      "title": "HOLLANDIA KRÉMOVÝ JOGURT JAHODA 150 g",
-      "description": "Hollandia Krémový jogurt",
-      "price": "9.9",
-      "page": 31,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105040307"
-    },
-    {
       "title": "HOLLANDIA KRÉMOVÝ JOGURT TŘEŠEŇ 150 g",
       "description": "Hollandia Krémový jogurt",
       "price": "10.9",
       "page": 31,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105040309"
+    },
+    {
+      "title": "HOLLANDIA KRÉMOVÝ JOGURT JAHODA 150 g",
+      "description": "Hollandia Krémový jogurt",
+      "price": "9.9",
+      "page": 31,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105040307"
     },
     {
       "title": "HOLLANDIA KRÉMOVÝ JOGURT MERUŇKA 150 g",
@@ -3926,7 +3926,7 @@
     {
       "title": "T. S. PRKEN. KR. S R. B. 3 KS",
       "description": "Tesco Prkénka na krájení",
-      "price": "189.9",
+      "price": "149",
       "page": 37,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100546868"
     },
@@ -4036,6 +4036,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100953464"
     },
     {
+      "title": "TS KURECI STEHNA HORNI RB",
+      "description": "Tesco Kuřecí stehna horní",
+      "price": "89.9",
+      "page": 30,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001011885714"
+    },
+    {
       "title": "TS KURECI STEHNA SPODNI",
       "description": "Tesco Kuřecí stehna spodní",
       "price": "89.9",
@@ -4057,13 +4064,6 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001005390118"
     },
     {
-      "title": "TS KURECI STEHNA HORNI RB",
-      "description": "Tesco Kuřecí stehna horní",
-      "price": "84.9",
-      "page": 30,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001011885714"
-    },
-    {
       "title": "TS KURECI FILETKY OA",
       "description": "Tesco Kuřecí filetky",
       "price": "179.9",
@@ -4078,18 +4078,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105029231"
     },
     {
-      "title": "POLICKY UHERAK 4 80g",
-      "description": "Polický uherák",
-      "price": "144.9",
-      "page": 30,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019270888"
-    },
-    {
       "title": "POLICKY UHERAK 7 5g",
       "description": "Polický uherák",
       "price": "29.9",
       "page": 30,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019271014"
+    },
+    {
+      "title": "POLICKY UHERAK 4 80g",
+      "description": "Polický uherák",
+      "price": "144.9",
+      "page": 30,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019270888"
     },
     {
       "title": "TOČEŇÁK",
@@ -4099,18 +4099,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019480645"
     },
     {
-      "title": "REDITELSKE PARKY",
-      "description": "vybrané pultové uzeniny",
-      "price": "19.9",
-      "page": 30,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020055339"
-    },
-    {
       "title": "REDITELSKE PARKY 180g",
       "description": "Ředitelské párky",
       "price": "49.9",
       "page": 30,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020104157"
+    },
+    {
+      "title": "REDITELSKE PARKY",
+      "description": "vybrané pultové uzeniny",
+      "price": "19.9",
+      "page": 30,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020055339"
     },
     {
       "title": "PEJSKAR POLICKÁ KLOBÁSA KRÁJENÁ 100 g",
@@ -4129,7 +4129,7 @@
     {
       "title": "CHODURA DEBRECÍNSKÉ PÁRKY 200 g",
       "description": "Chodura párky",
-      "price": "49.9",
+      "price": "39.9",
       "page": 30,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105031594"
     },
@@ -4155,20 +4155,6 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105031591"
     },
     {
-      "title": "APETIT ŠPANĚLSKÝ PTÁČEK, RÝŽE 490 g",
-      "description": "Apetit Španělský ptáček, rýže",
-      "price": "74.9",
-      "page": 30,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020370935"
-    },
-    {
-      "title": "APETIT SRBSKÉ RIZOTO SYPANÉ SÝREM 480 g",
-      "description": "Apetit Srbské rizoto sypané sýrem",
-      "price": "74.9",
-      "page": 30,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105460334"
-    },
-    {
       "title": "APETIT CORDON BLEU VAŘENÉ BRAMBORY 380 g",
       "description": "Apetit Cordon bleu, vařené brambory",
       "price": "74.9",
@@ -4181,6 +4167,20 @@
       "price": "74.9",
       "page": 30,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020368039"
+    },
+    {
+      "title": "APETIT ŠPANĚLSKÝ PTÁČEK, RÝŽE 490 g",
+      "description": "Apetit Španělský ptáček, rýže",
+      "price": "74.9",
+      "page": 30,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020370935"
+    },
+    {
+      "title": "APETIT SRBSKÉ RIZOTO SYPANÉ SÝREM 480 g",
+      "description": "Apetit Srbské rizoto sypané sýrem",
+      "price": "74.9",
+      "page": 30,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105460334"
     },
     {
       "title": "APETIT ALPSKÝ POVIDLOV.KNEDLÍK S J.KRÉMEM 410 g",
@@ -4304,7 +4304,7 @@
     {
       "title": "TS MLETÉ MASO VEPŘOVÉ 500 g",
       "description": "Tesco Mleté maso z vepřové plece",
-      "price": "69.9",
+      "price": "64.9",
       "page": 30,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018341497"
     },
@@ -4631,25 +4631,25 @@
       "product_url": "https://www.itesco.cz/akcni-nabidky/akcni-nabidky-produkty/produkt/157542"
     },
     {
+      "title": "TS MOUKA HRUBA 1kg",
+      "description": "Tesco Mouka",
+      "price": "10.9",
+      "page": 32,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120849755"
+    },
+    {
+      "title": "TS MOUKA POLOHRUBA 1kg",
+      "description": "Tesco Mouka",
+      "price": "10.9",
+      "page": 32,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120849743"
+    },
+    {
       "title": "TS MOUKA HLADKA 1kg",
       "description": "Tesco Mouka",
       "price": "0",
       "page": 32,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120849737"
-    },
-    {
-      "title": "TS MOUKA POLOHRUBA 1kg",
-      "description": "Tesco Mouka",
-      "price": "0",
-      "page": 32,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120849743"
-    },
-    {
-      "title": "TS MOUKA HRUBA 1kg",
-      "description": "Tesco Mouka",
-      "price": "0",
-      "page": 32,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120849755"
     },
     {
       "title": "PREMIUM SEMOLI VRETNA 500g",
@@ -4750,6 +4750,20 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111270577"
     },
     {
+      "title": "ORION STUDENTSKÁ PEČEŤ KARAMEL & LÍSK.OŘÍŠEK 235g",
+      "description": "Orion Studentská pečeť",
+      "price": "89.9",
+      "page": 32,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105015302"
+    },
+    {
+      "title": "ORION STUDENTSKÁ PEČET PISTÁCIE 225 g",
+      "description": "Orion Studentská pečeť",
+      "price": "79.9",
+      "page": 32,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111269550"
+    },
+    {
       "title": "ORION STP KARAM. COOKIES 235g",
       "description": "Orion Studentská pečeť",
       "price": "89.9",
@@ -4764,13 +4778,6 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105005111"
     },
     {
-      "title": "ORION STUDENTSKÁ PEČEŤ KARAMEL & LÍSK.OŘÍŠEK 235g",
-      "description": "Orion Studentská pečeť",
-      "price": "89.9",
-      "page": 32,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105015302"
-    },
-    {
       "title": "ORION STUDENTSKÁ PEČET MLÉČNÁ 250 g",
       "description": "Orion Studentská pečeť",
       "price": "89.9",
@@ -4783,13 +4790,6 @@
       "price": "89.9",
       "page": 32,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111267646"
-    },
-    {
-      "title": "ORION STUDENTSKÁ PEČET PISTÁCIE 225 g",
-      "description": "Orion Studentská pečeť",
-      "price": "89.9",
-      "page": 32,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111269550"
     },
     {
       "title": "ORION STUDENTSKÁ PEČET VIŠEŇ & HOŘKÁ 225 g",
@@ -4862,6 +4862,20 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001008013779"
     },
     {
+      "title": "JOJO KYSELÉ RYBIČKY 170g",
+      "description": "JoJo Bonbony",
+      "price": "29.9",
+      "page": 32,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020330446"
+    },
+    {
+      "title": "JOJO MIXLE PIXLE 170g",
+      "description": "JoJo Bonbony",
+      "price": "29.9",
+      "page": 32,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120092859"
+    },
+    {
       "title": "JOJO VEXTA 170g",
       "description": "JoJo Bonbony",
       "price": "34.9",
@@ -4874,20 +4888,6 @@
       "price": "29.9",
       "page": 32,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019442650"
-    },
-    {
-      "title": "JOJO KYSELÉ RYBIČKY 170g",
-      "description": "JoJo Bonbony",
-      "price": "34.9",
-      "page": 32,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020330446"
-    },
-    {
-      "title": "JOJO MIXLE PIXLE 170g",
-      "description": "JoJo Bonbony",
-      "price": "34.9",
-      "page": 32,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120092859"
     },
     {
       "title": "JOJO KAKTUSÁCI MIX ŽELÉ S OVOC. PŘÍCHUTĚMI 170 g",
@@ -5102,9 +5102,16 @@
     {
       "title": "OPAVIA BRUMÍK S JABLEČNO-JAHODO. NÁPLNÍ 150 g",
       "description": "Opavia Brumík",
-      "price": "39.9",
+      "price": "44.9",
       "page": 32,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111267619"
+    },
+    {
+      "title": "MILKA CHOCO & CAKE 175 g",
+      "description": "Milka sušenky",
+      "price": "39.9",
+      "page": 32,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120625259"
     },
     {
       "title": "MDLZ MILKA CHOCO COW 120g",
@@ -5126,20 +5133,6 @@
       "price": "34.9",
       "page": 32,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001130559817"
-    },
-    {
-      "title": "MILKA CHOCOMINIS 150Gg",
-      "description": "Milka Chocominis sušenky",
-      "price": "39.9",
-      "page": 32,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120331883"
-    },
-    {
-      "title": "MILKA CHOCO & CAKE 175 g",
-      "description": "Milka sušenky",
-      "price": "39.9",
-      "page": 32,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120625259"
     },
     {
       "title": "Milka Cookie Sens Oreo 156 g",
@@ -5182,6 +5175,13 @@
       "price": "39.9",
       "page": 32,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019506796"
+    },
+    {
+      "title": "MILKA CHOCOMINIS 150Gg",
+      "description": "Milka Chocominis sušenky",
+      "price": "39.9",
+      "page": 32,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120331883"
     },
     {
       "title": "MILKA JAFFA PIŠKOTY PŘÍCHUŤ MALINA 147g",
@@ -5366,6 +5366,13 @@
       "product_url": null
     },
     {
+      "title": "DOVE SPRCHOVÝ GEL SILKY VELVET 720 ml",
+      "description": "Dove Sprchový gel",
+      "price": "149.9",
+      "page": 34,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105012280"
+    },
+    {
       "title": "DOVE CREAMY INDULGE SPRCHOVÝ GEL 720 ml",
       "description": "Dove Sprchový gel",
       "price": "149.9",
@@ -5380,13 +5387,6 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111273427"
     },
     {
-      "title": "DOVE SPRCHOVÝ GEL SILKY VELVET 720 ml",
-      "description": "Dove Sprchový gel",
-      "price": "149.9",
-      "page": 34,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105012280"
-    },
-    {
       "title": "DOVE SPRCHOVÝ GEL HYDRATE 720 ml",
       "description": "Dove Sprchový gel",
       "price": "149.9",
@@ -5399,6 +5399,13 @@
       "price": "149.9",
       "page": 34,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105012275"
+    },
+    {
+      "title": "REXONA MEN DEO SPREJ INVISIBLE F&P 150 ml",
+      "description": "Rexona Deodorant",
+      "price": "59.9",
+      "page": 34,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020308809"
     },
     {
       "title": "REXONA DEO SEXY 150ml .",
@@ -5471,13 +5478,6 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020086006"
     },
     {
-      "title": "REXONA MEN DEO SPREJ INVISIBLE F&P 150 ml",
-      "description": "Rexona Deodorant",
-      "price": "0",
-      "page": 34,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020308809"
-    },
-    {
       "title": "REXONA DEO MEN COBALT 150ml .",
       "description": "Rexona Deodorant",
       "price": "59.9",
@@ -5504,6 +5504,13 @@
       "price": "49.9",
       "page": 34,
       "product_url": "https://www.itesco.cz/akcni-nabidky/akcni-nabidky-produkty/produkt/157154"
+    },
+    {
+      "title": "GARNIER FRUCTIS ŠAMPON S EXTRAK. Z GRAPEF. 400 ml",
+      "description": "Garnier Fructis Vlasová kosmetika",
+      "price": "99.9",
+      "page": 34,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105009702"
     },
     {
       "title": "FRUCTIS VITAMIN ŠAMPON NA VLASY 400 ml",
@@ -5541,13 +5548,6 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020222145"
     },
     {
-      "title": "GARNIER FRUCTIS ŠAMPON S EXTRAK. Z GRAPEF. 400 ml",
-      "description": "Garnier Fructis Vlasová kosmetika",
-      "price": "99.9",
-      "page": 34,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105009702"
-    },
-    {
       "title": "INDULONA KRÉM NA RUCE ORIGINAL 75 ml",
       "description": "Indulona Krém na ruce",
       "price": "49.9",
@@ -5574,20 +5574,6 @@
       "price": "49.9",
       "page": 34,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105004162"
-    },
-    {
-      "title": "SUNAR MLÉČ. KAŠE KRUPI. DOB. NOC PŘ. VANIL. 210 g",
-      "description": "Sunar kaše",
-      "price": "99.9",
-      "page": 34,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105008870"
-    },
-    {
-      "title": "SUNAR MLÉČ. KAŠE KRUPI. DOB. NOC PŘ. MEDOV. 210 g",
-      "description": "Sunar kaše",
-      "price": "99.9",
-      "page": 34,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105008892"
     },
     {
       "title": "SUNAR MLÉČ. KAŠE KRUPICOVÁ PŘÍCH. SKOŘ. JAB. 210 g",
@@ -5637,6 +5623,20 @@
       "price": "74.9",
       "page": 34,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105010017"
+    },
+    {
+      "title": "SUNAR MLÉČ. KAŠE KRUPI. DOB. NOC PŘ. VANIL. 210 g",
+      "description": "Sunar kaše",
+      "price": "69.9",
+      "page": 34,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105008870"
+    },
+    {
+      "title": "SUNAR MLÉČ. KAŠE KRUPI. DOB. NOC PŘ. MEDOV. 210 g",
+      "description": "Sunar kaše",
+      "price": "69.9",
+      "page": 34,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105008892"
     },
     {
       "title": "SUNAR KAŠE RÝŽOVÁ 220 g",
@@ -5991,7 +5991,7 @@
     {
       "title": "C. SV AERO 360 TABLETY 2X450G",
       "description": "Ceresit Stop vlhkosti Aero 360°",
-      "price": "0",
+      "price": "209",
       "page": 35,
       "product_url": "https://www.itesco.cz/akcni-nabidky/akcni-nabidky-produkty/produkt/157102"
     },
@@ -6073,6 +6073,13 @@
       "product_url": "https://www.itesco.cz/akcni-nabidky/akcni-nabidky-produkty/produkt/157155"
     },
     {
+      "title": "Aroso H1 Light Plus 130% 12V55",
+      "description": "Všechny Aroso žárovky do auta",
+      "price": "0",
+      "page": 35,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100725031"
+    },
+    {
       "title": "Aroso H4 Light Plus blue 12V60",
       "description": "Všechny Aroso žárovky do auta",
       "price": "0",
@@ -6085,13 +6092,6 @@
       "price": "0",
       "page": 35,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100725022"
-    },
-    {
-      "title": "Aroso H1 Light Plus 130% 12V55",
-      "description": "Všechny Aroso žárovky do auta",
-      "price": "0",
-      "page": 35,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100725031"
     },
     {
       "title": "Aroso H7 Light Plus blue 12V55",
@@ -6166,7 +6166,7 @@
     {
       "title": "REIKEL LION VRTACKA 18 V",
       "description": "Reikel Akumulátorová vrtačka**",
-      "price": "839",
+      "price": "799",
       "page": 35,
       "product_url": "https://www.itesco.cz/akcni-nabidky/akcni-nabidky-produkty/produkt/157227"
     },
@@ -6640,6 +6640,20 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001015806623"
     },
     {
+      "title": "LAYS BRAMBOROVÉ LUPÍNKY S PŘÍCH. BBQ ŽEBÍR. 130 g",
+      "description": "Lay's Smažené bramborové lupínky",
+      "price": "29.9",
+      "page": 1,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105005237"
+    },
+    {
+      "title": "LAY'S SM. BRAMB. LUPÍNKY PŘÍCHUŤ PIK.PAPR. 130 g",
+      "description": "Lay's Smažené bramborové lupínky",
+      "price": "29.9",
+      "page": 1,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105005238"
+    },
+    {
       "title": "LAY'S SMAŽENÉ BRAMBOR. LUPÍNKY SOLENÉ 130 g",
       "description": "Lay's Smažené bramborové lupínky",
       "price": "34.9",
@@ -6703,20 +6717,6 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105005236"
     },
     {
-      "title": "LAYS BRAMBOROVÉ LUPÍNKY S PŘÍCH. BBQ ŽEBÍR. 130 g",
-      "description": "Lay's Smažené bramborové lupínky",
-      "price": "36.9",
-      "page": 1,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105005237"
-    },
-    {
-      "title": "LAY'S SM. BRAMB. LUPÍNKY PŘÍCHUŤ PIK.PAPR. 130 g",
-      "description": "Lay's Smažené bramborové lupínky",
-      "price": "36.9",
-      "page": 1,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105005238"
-    },
-    {
       "title": "LAY'S STIX S PŘÍCHUTÍ KEČUPU 130 g",
       "description": "Lay's Smažené bramborové lupínky",
       "price": "36.9",
@@ -6745,6 +6745,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105010950"
     },
     {
+      "title": "MAGNESIA 1,5L PE T",
+      "description": "Magnesia",
+      "price": "0",
+      "page": 1,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001007620213"
+    },
+    {
       "title": "MAGNESIA JEMNE P ERLIVA 1.5l",
       "description": "Magnesia",
       "price": "14.9",
@@ -6759,18 +6766,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001016373544"
     },
     {
-      "title": "MAGNESIA 1,5L PE T",
-      "description": "Magnesia",
-      "price": "14.9",
-      "page": 1,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001007620213"
-    },
-    {
       "title": "COCA-COLA 1,5l PET",
       "description": "Coca-Cola",
-      "price": "31.9",
+      "price": "0",
       "page": 1,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120538178"
+    },
+    {
+      "title": "FANTA ZERO CUKRU S PŘÍCHU. JABLKA A LIČI 1,5 L",
+      "description": "Coca-Cola",
+      "price": "32.9",
+      "page": 1,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105443807"
     },
     {
       "title": "COCA-COLA ZERO 1,5l PET",
@@ -6820,13 +6827,6 @@
       "price": "31.9",
       "page": 1,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105011821"
-    },
-    {
-      "title": "FANTA ZERO CUKRU S PŘÍCHU. JABLKA A LIČI 1,5 L",
-      "description": "Coca-Cola",
-      "price": "31.9",
-      "page": 1,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105443807"
     },
     {
       "title": "SPRITE ZERO CUKRU 1,5 L",
@@ -7062,7 +7062,7 @@
     {
       "title": "TS BROKOLICE 500g",
       "description": "Tesco Brokolice",
-      "price": "0",
+      "price": "24.9",
       "page": 3,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001012974837"
     },
@@ -7494,6 +7494,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105013066"
     },
     {
+      "title": "VALMEZ SMET.JOG. PRÍCH.BROSKEV 150 g",
+      "description": "Smetanový jogurt z Valašska",
+      "price": "11.9",
+      "page": 4,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120273726"
+    },
+    {
       "title": "VALMEZ SMET.JOG. PRÍCH.JAHODA 150 g",
       "description": "Smetanový jogurt z Valašska",
       "price": "11.9",
@@ -7506,13 +7513,6 @@
       "price": "11.9",
       "page": 4,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001011989467"
-    },
-    {
-      "title": "VALMEZ SMET.JOG. PRÍCH.BROSKEV 150 g",
-      "description": "Smetanový jogurt z Valašska",
-      "price": "11.9",
-      "page": 4,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120273726"
     },
     {
       "title": "VALMEZ SMET.JOG. PRÍCH.JAHODA+VA. 150 g",
@@ -7690,6 +7690,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020283926"
     },
     {
+      "title": "KUNÍN POHÁR PŘÍCH. BORŮVKA 150 g",
+      "description": "Kunín Smetanový pohár",
+      "price": "14.9",
+      "page": 4,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020314490"
+    },
+    {
       "title": "KUNÍN POHÁR PŘÍCH. ČOKOLÁDA 150 g",
       "description": "Kunín Smetanový pohár",
       "price": "14.9",
@@ -7702,13 +7709,6 @@
       "price": "14.9",
       "page": 4,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020329649"
-    },
-    {
-      "title": "KUNÍN POHÁR PŘÍCH. BORŮVKA 150 g",
-      "description": "Kunín Smetanový pohár",
-      "price": "14.9",
-      "page": 4,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020314490"
     },
     {
       "title": "KUNÍN POHÁR PŘÍCH. MERUŇKA 150 g",
@@ -7725,18 +7725,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018868970"
     },
     {
+      "title": "SEDLČ. HERMELÍN ORIGINÁL 100 g",
+      "description": "Sedlčanský Hermelín",
+      "price": "29.9",
+      "page": 4,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000131136"
+    },
+    {
       "title": "SEDLČ. HERMELÍN FIGURA 100 g",
       "description": "Sedlčanský Hermelín",
       "price": "32.9",
       "page": 4,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001015853030"
-    },
-    {
-      "title": "SEDLČ. HERMELÍN ORIGINÁL 100 g",
-      "description": "Sedlčanský Hermelín",
-      "price": "28.9",
-      "page": 4,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000131136"
     },
     {
       "title": "SEDLC.HERMELÍN SMETANOVÝ 100 g",
@@ -7751,6 +7751,13 @@
       "price": "34.9",
       "page": 4,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105493429"
+    },
+    {
+      "title": "LEERDAMMER CARA. PLÁTKOVÝ SÝR 125 g",
+      "description": "Leerdammer plátky",
+      "price": "49.9",
+      "page": 4,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111276680"
     },
     {
       "title": "LEERDAMMER  PL. ORIGINAL 100 g",
@@ -7807,13 +7814,6 @@
       "price": "49.9",
       "page": 4,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111276677"
-    },
-    {
-      "title": "LEERDAMMER CARA. PLÁTKOVÝ SÝR 125 g",
-      "description": "Leerdammer plátky",
-      "price": "39.9",
-      "page": 4,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111276680"
     },
     {
       "title": "APETITO TAVENÝ SÝR SE SMETANOU 3 ks 140 g",
@@ -7879,6 +7879,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020326462"
     },
     {
+      "title": "TS ZÁVIN ORECHOVÁ NÁPLN 400g",
+      "description": "Tesco závin",
+      "price": "39.9",
+      "page": 4,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020241521"
+    },
+    {
       "title": "TS ZÁVIN JABLECNÁ NÁPLN 400g",
       "description": "Tesco závin",
       "price": "39.9",
@@ -7891,13 +7898,6 @@
       "price": "39.9",
       "page": 4,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020241518"
-    },
-    {
-      "title": "TS ZÁVIN ORECHOVÁ NÁPLN 400g",
-      "description": "Tesco závin",
-      "price": "39.9",
-      "page": 4,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020241521"
     },
     {
       "title": "TS ZÁVIN TVAROHOVÁ NÁPLN 400g",
@@ -8147,7 +8147,7 @@
     {
       "title": "SEDITA MILA OPL. S KOKOS. MLÉČN. NÁPLNÍ 50 g",
       "description": "Sedita Mila",
-      "price": "12.9",
+      "price": "0",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005111274884"
     },
@@ -8201,6 +8201,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001019260216"
     },
     {
+      "title": "JUPÍ SIRUP SLV ZAHRADNÍ 0,7l",
+      "description": "Jupí SLV",
+      "price": "39.9",
+      "page": 9,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020207195"
+    },
+    {
       "title": "JUPI KOKTEJL MOJITO 0,7l",
       "description": "Jupí koktejl",
       "price": "39.9",
@@ -8213,13 +8220,6 @@
       "price": "39.9",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020207196"
-    },
-    {
-      "title": "JUPÍ SIRUP SLV ZAHRADNÍ 0,7l",
-      "description": "Jupí SLV",
-      "price": "39.9",
-      "page": 9,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020207195"
     },
     {
       "title": "JUPÍ ČERNÝ ČAJ S BROSKVÍ 0,7 l",
@@ -8250,6 +8250,13 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020332498"
     },
     {
+      "title": "GRANINI MULTIFRU IT 1l",
+      "description": "Granini",
+      "price": "34.9",
+      "page": 9,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018733131"
+    },
+    {
       "title": "GRANINI POMERAN. NEKTAR 1 L",
       "description": "Granini",
       "price": "42.9",
@@ -8276,13 +8283,6 @@
       "price": "42.9",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120026496"
-    },
-    {
-      "title": "GRANINI MULTIFRU IT 1l",
-      "description": "Granini",
-      "price": "42.9",
-      "page": 9,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018733131"
     },
     {
       "title": "GRANINI HRUSKA 1l",
@@ -8313,18 +8313,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001128009268"
     },
     {
+      "title": "KINDER BUENO BILE 39g",
+      "description": "Kinder Bueno",
+      "price": "18.9",
+      "page": 9,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018060602"
+    },
+    {
       "title": "KINDER BUENO 43g",
       "description": "Kinder Bueno",
       "price": "19.9",
       "page": 9,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001000011858"
-    },
-    {
-      "title": "KINDER BUENO BILE 39g",
-      "description": "Kinder Bueno",
-      "price": "19.9",
-      "page": 9,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001018060602"
     },
     {
       "title": "KINDER BUENO HORKE 43g",
@@ -8642,18 +8642,18 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001120064778"
     },
     {
-      "title": "SÁDLO V KERAMICE 900 g",
-      "description": "Sádlo v keramice",
-      "price": "309.9",
-      "page": 18,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020060876"
-    },
-    {
       "title": "KRÁSNO VEPŘOVÉ SÁDLO ŠKVAŘENÉ V KERAMICE 500 g",
       "description": "Krásno Vepřové sádlo v keramice",
       "price": "219.9",
       "page": 18,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005105011368"
+    },
+    {
+      "title": "SÁDLO V KERAMICE 900 g",
+      "description": "Sádlo v keramice",
+      "price": "309.9",
+      "page": 18,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001020060876"
     },
     {
       "title": "KLOBASA CSABAI LANGOLT 600g",
