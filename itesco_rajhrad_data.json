@@ -6,7 +6,7 @@
     "total_pages": 43,
     "valid_from": "2026-11-18T07:00:00.000Z",
     "valid_to": "2026-11-24T22:59:59.000Z",
-    "scraped_at": "2026-11-18T00:10:12.897673+00:00",
+    "scraped_at": "2026-11-18T14:45:02.931904+00:00",
     "error": null
   },
   "products": [
@@ -1012,6 +1012,20 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100800869"
     },
     {
+      "title": "SADA AKU NÁŘADÍ 5 ks",
+      "description": "Powerplus Sada aku nářadí",
+      "price": "0",
+      "page": 29,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005101059410"
+    },
+    {
+      "title": "KÄRCHER SC 1 MULTI PARNÍ ČISTIČ",
+      "description": "Kärcher SC 1 Multi Parní čistič",
+      "price": "0",
+      "page": 29,
+      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005101072642"
+    },
+    {
       "title": "TEFAL DAILY COOK SADA NÁDOBÍ 10 ks",
       "description": "Tefal Daily Cook Sada nádobí",
       "price": "0",
@@ -1031,20 +1045,6 @@
       "price": "",
       "page": 29,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005101036035"
-    },
-    {
-      "title": "SADA AKU NÁŘADÍ 5 ks",
-      "description": "Powerplus Sada aku nářadí",
-      "price": "0",
-      "page": 29,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005101059410"
-    },
-    {
-      "title": "KÄRCHER SC 1 MULTI PARNÍ ČISTIČ",
-      "description": "Kärcher SC 1 Multi Parní čistič",
-      "price": "0",
-      "page": 29,
-      "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005101072642"
     },
     {
       "title": "HŘEBEN DUO JABLKO, SKOŘICE 105 g",
@@ -6143,13 +6143,6 @@
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2005100725906"
     },
     {
-      "title": "DYNAMAX ZIMNÍ SMĚS DO OSTŘIKOVAČŮ 40°C",
-      "description": "Dynamax Zimní směs do ostřikovačů",
-      "price": "219.9",
-      "page": 35,
-      "product_url": "https://www.itesco.cz/akcni-nabidky/akcni-nabidky-produkty/produkt/157157"
-    },
-    {
       "title": "HLINIK OBOUSTRANNY ZEBRIK 2X2",
       "description": "Hliníkové schůdky",
       "price": "559",
@@ -6309,6 +6302,13 @@
       "price": "139.9",
       "page": 35,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001128007485"
+    },
+    {
+      "title": "DYNAMAX ZIMNÍ SMĚS DO OSTŘIKOVAČŮ 40°C",
+      "description": "Dynamax Zimní směs do ostřikovačů",
+      "price": "219.9",
+      "page": 35,
+      "product_url": "https://www.itesco.cz/akcni-nabidky/akcni-nabidky-produkty/produkt/157157"
     },
     {
       "title": "FIGARO HOŘKÁ ČOKOLÁDA NA VAŘENÍ 90 g",
