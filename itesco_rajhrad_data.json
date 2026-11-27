@@ -6,7 +6,7 @@
     "total_pages": 46,
     "valid_from": "2026-11-25T07:00:00.000Z",
     "valid_to": "2026-12-01T22:59:59.000Z",
-    "scraped_at": "2026-11-27T01:15:42.553758+00:00",
+    "scraped_at": "2026-11-27T15:47:17.990139+00:00",
     "error": null
   },
   "products": [
@@ -3471,7 +3471,7 @@
     {
       "title": "DUEL PRACÍ GEL UNIVERSAL 19 PRANÍ 855 ml",
       "description": "Duel praci gel",
-      "price": "69.9",
+      "price": "74.9",
       "page": 32,
       "product_url": "https://nakup.itesco.cz/groceries/cs-CZ/products/2001128007832"
     },
